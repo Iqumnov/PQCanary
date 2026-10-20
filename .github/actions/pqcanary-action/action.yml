@@ -1,0 +1,76 @@
+name: 'PQCanary Post-Quantum Cryptographic Gatekeeper'
+description: 'Autonomous enterprise post-quantum cryptographic security audit, SARIF generation, and regression gatekeeper.'
+author: 'Matvei Igumnov'
+
+inputs:
+  path:
+    description: 'Path or directory to scan'
+    required: false
+    default: '.'
+  fail-on:
+    description: 'Quality gate failure condition: critical, high, medium, new, or none'
+    required: false
+    default: 'new'
+  sarif-output:
+    description: 'Path to write OASIS SARIF 2.1.0 output file'
+    required: false
+    default: 'pqcanary-results.sarif'
+  upload-sarif:
+    description: 'Whether to upload SARIF report to GitHub Code Scanning'
+    required: false
+    default: 'true'
+  github-token:
+    description: 'GitHub token for Code Scanning upload'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  sarif-file:
+    description: 'Path to the generated SARIF report file'
+    value: ${{ inputs.sarif-output }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache PQCanary binary
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/bin/pqcanary
+        key: pqcanary-${{ runner.os }}-v0.1.0
+
+    - name: Install PQCanary
+      shell: bash
+      run: |
+        if ! command -v pqcanary &> /dev/null; then
+          echo "Building and installing PQCanary CLI..."
+          cargo install --path ./cli --bin pqcanary --locked || cargo build --release -p pqcanary-cli
+          if [ -f "./target/release/pqcanary" ]; then
+            sudo cp ./target/release/pqcanary /usr/local/bin/ || true
+          fi
+        fi
+
+    - name: Execute Cryptographic Audit & SARIF Generation
+      shell: bash
+      run: |
+        echo "Executing PQCanary audit on path: ${{ inputs.path }}"
+        pqcanary scan "${{ inputs.path }}" \
+          --format sarif \
+          --output "${{ inputs.sarif-output }}" \
+          --fail-on "${{ inputs.fail-on }}" || SCAN_EXIT=$?
+        
+        echo "Scan completed with status: ${SCAN_EXIT:-0}"
+        if [ "${SCAN_EXIT:-0}" -ne 0 ] && [ "${{ inputs.fail-on }}" != "none" ]; then
+          echo "::error::PQCanary quality gate breached (${{ inputs.fail-on }} vulnerabilities detected)."
+          exit $SCAN_EXIT
+        fi
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: ${{ inputs.upload-sarif == 'true' && (success() || failure()) }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-output }}
+        category: 'PQCanary-PQC-Audit'
+        token: ${{ inputs.github-token }}

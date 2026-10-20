@@ -1,0 +1,258 @@
+name: PQCanary Multi-Platform Release Matrix
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # ─── 1. Windows Release Matrix (CLI, MSI, NSIS EXE) ────────────────────────
+  build-windows:
+    name: Build Windows (CLI, MSI, EXE)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Native CLI
+        run: cargo build --release --bin pqcanary --bin pqcanary-mcp
+
+      - name: Build Web UI
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+
+      - name: Build Tauri Desktop (MSI & NSIS)
+        working-directory: ./web
+        run: npx @tauri-apps/cli build --bundles msi,nsis
+
+      - name: Upload Windows CLI Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-windows-x64-cli
+          path: target/release/pqcanary.exe
+
+      - name: Upload Windows Desktop Installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-windows-installers
+          path: web/src-tauri/target/release/bundle/*/*
+
+  # ─── 2. Linux Release Matrix (CLI, DEB, AppImage) ──────────────────────────
+  build-linux:
+    name: Build Linux (CLI, DEB, AppImage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libayatana-appindicator3-dev librsvg2-dev z3 libz3-dev
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Native CLI & MCP
+        run: cargo build --release --bin pqcanary --bin pqcanary-mcp
+
+      - name: Build Web UI
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+
+      - name: Build Tauri Desktop (.deb, .AppImage)
+        working-directory: ./web
+        run: npx @tauri-apps/cli build --bundles deb,appimage
+
+      - name: Upload Linux CLI Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-linux-x64-cli
+          path: target/release/pqcanary
+
+      - name: Upload Linux Desktop Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-linux-packages
+          path: web/src-tauri/target/release/bundle/*/*
+
+  # ─── 3. Mobile Android Release Matrix (APK) ────────────────────────────────
+  build-android-apk:
+    name: Build Android (Universal APK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Android NDK
+        run: |
+          ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
+          echo "NDK_HOME=${ANDROID_HOME}/ndk/26.1.10909125" >> $GITHUB_ENV
+
+      - name: Setup Rust Toolchain & Android Targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Web Frontend
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+
+      - name: Initialize Tauri Android Target
+        working-directory: ./web
+        run: npx @tauri-apps/cli android init --ci
+
+      - name: Build Android Release APK
+        working-directory: ./web
+        run: npx @tauri-apps/cli android build --apk
+
+      - name: Upload Android Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-android-release-apk
+          path: web/src-tauri/gen/android/app/build/outputs/apk/release/*.apk
+
+  # ─── 4. Pre-Built WebAssembly & Web Distribution ───────────────────────────
+  build-wasm-web:
+    name: Build Web & Pre-Built WASM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust & Wasm Target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build WebAssembly Bundle
+        run: bash scripts/build_wasm.sh
+
+      - name: Build Web UI
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload Web Assets Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqcanary-web-dist
+          path: web/.output/public/
+
+  # ─── 5. Multi-Platform Docker Container ────────────────────────────────────
+  build-docker:
+    name: Build & Test Multi-Service Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: pqcanary/pqcanary:latest
+
+  # ─── 6. GitHub Release Publisher ──────────────────────────────────────────
+  publish-release:
+    name: Publish Official GitHub Release
+    needs: [build-windows, build-linux, build-android-apk, build-wasm-web]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Windows CLI
+        uses: actions/download-artifact@v4
+        with:
+          name: pqcanary-windows-x64-cli
+          path: release-assets/windows-cli
+
+      - name: Download Windows Installers
+        uses: actions/download-artifact@v4
+        with:
+          name: pqcanary-windows-installers
+          path: release-assets/windows-installers
+
+      - name: Download Linux CLI
+        uses: actions/download-artifact@v4
+        with:
+          name: pqcanary-linux-x64-cli
+          path: release-assets/linux-cli
+
+      - name: Download Linux Packages
+        uses: actions/download-artifact@v4
+        with:
+          name: pqcanary-linux-packages
+          path: release-assets/linux-packages
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: pqcanary-android-release-apk
+          path: release-assets/android
+
+      - name: Flatten & Prepare Release Assets
+        run: |
+          mkdir -p dist
+          find release-assets/ -type f -exec cp {} dist/ \;
+          ls -la dist/
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQCanary Security Auditor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="pq-ext-container">
+    <!-- Header -->
+    <header class="pq-header">
+      <div class="pq-logo-row">
+        <div class="pq-brand">
+          <svg class="pq-shield-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M9 12l2 2 4-4" stroke="#F59E0B" stroke-width="2.5" />
+          </svg>
+          <span class="pq-logo-text">PQCanary</span>
+        </div>
+        <span class="pq-fips-pill">NIST FIPS 203/204</span>
+      </div>
+      <div class="pq-subhead">Post-Quantum Cryptographic Web Auditor</div>
+    </header>
+
+    <!-- Target Site Card -->
+    <section class="pq-card pq-target-card">
+      <div class="pq-url-row">
+        <span id="site-protocol-badge" class="pq-proto-badge">HTTPS</span>
+        <span id="site-hostname" class="pq-hostname" title="Current Website">Scanning tab...</span>
+      </div>
+      <div id="site-full-url" class="pq-url-caption">https://...</div>
+    </section>
+
+    <!-- Executive Grade Card -->
+    <section class="pq-card pq-grade-card">
+      <div class="pq-grade-left">
+        <div id="grade-badge" class="pq-grade-circle grade-a">A+</div>
+      </div>
+      <div class="pq-grade-right">
+        <div id="grade-status" class="pq-grade-status">Post-Quantum Safe</div>
+        <div id="grade-summary" class="pq-grade-summary">No classical cryptographic vulnerabilities detected.</div>
+      </div>
+    </section>
+
+    <!-- Metrics Row -->
+    <section class="pq-metrics-row">
+      <div class="pq-metric-item">
+        <span id="metric-critical-count" class="pq-metric-val val-danger">0</span>
+        <span class="pq-metric-lbl">Critical</span>
+      </div>
+      <div class="pq-metric-item">
+        <span id="metric-findings-count" class="pq-metric-val val-warn">0</span>
+        <span class="pq-metric-lbl">Total Issues</span>
+      </div>
+      <div class="pq-metric-item">
+        <span id="metric-scripts-count" class="pq-metric-val val-safe">0</span>
+        <span class="pq-metric-lbl">Scripts</span>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="pq-actions-row">
+      <button id="btn-scan-site" class="pq-btn pq-btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <span>Audit Current Site</span>
+      </button>
+      <button id="btn-deep-scan" class="pq-btn pq-btn-secondary" title="Open full deep scan in PQCanary Web Dashboard">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        <span>Deep Scan</span>
+      </button>
+    </div>
+
+    <!-- Findings Section -->
+    <section class="pq-findings-section">
+      <div class="pq-section-title-row">
+        <span class="pq-section-title">Cryptographic Findings</span>
+        <span id="findings-pill" class="pq-count-pill">0</span>
+      </div>
+      <div id="findings-list" class="pq-findings-list">
+        <div class="pq-empty-state">
+          Click "Audit Current Site" to inspect loaded scripts, WebCrypto calls, and cryptographic primitives.
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pq-footer">
+      <span>PQCanary Platform &bull; Author: Matvei Igumnov</span>
+    </footer>
+  </div>
+
+  <script src="rules.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

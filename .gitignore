@@ -1,0 +1,90 @@
+# Rust & Cargo Build Artifacts
+/target/
+/target_alt/
+/target_test/
+**/*.rs.bk
+Cargo.lock.bak
+*.pdb
+
+# Tauri Desktop & Mobile Build Targets
+src-tauri/target/
+web/src-tauri/target/
+web/src-tauri/gen/android/
+web/src-tauri/gen/apple/
+
+# Executables & Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.msi
+*.apk
+*.aab
+rustup-init.exe
+
+# Node & Package Managers
+node_modules/
+web/node_modules/
+.pnpm-store/
+package-lock.json.bak
+pnpm-lock.yaml.bak
+
+# Web Build Output
+dist/
+build/
+.next/
+out/
+web/.output/
+web/.vinxi/
+web/dist/
+*.tsbuildinfo
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.pfx
+*.p12
+
+# IDEs & Editors
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test & Coverage
+coverage/
+.nyc_output/
+
+# Internal Research & Inspiration Archives
+.notes/
+inspiration/
+
+# Generated Scan Artifacts
+*.cbom.json
+*.sarif.json
+*.sarif
+pqcanary-report.html
+pqcanary-report.md
+pqcanary-report.csv
+
+# Temporary Directories
+tmp/
+.tmp/
+temp/
+
+# Excluded Unrelated Projects
+artei-main/

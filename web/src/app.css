@@ -1,0 +1,121 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+html, body, #root, #app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  background-color: transparent;
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #292524;
+}
+
+main {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: 2px solid #F59E0B;
+  outline-offset: 2px;
+}
+
+.pq-dropdown-btn:focus,
+.pq-dropdown-btn:focus-visible,
+.pq-dropdown-option-btn:focus,
+.pq-dropdown-option-btn:focus-visible,
+[id^="btn-tutorial-toggle-"]:focus,
+[id^="btn-tutorial-toggle-"]:focus-visible,
+[id^="rule-item-"]:focus,
+[id^="rule-item-"]:focus-visible {
+  outline: none !important;
+}
+
+@media print {
+  html, body, #root, #app {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    min-height: auto !important;
+  }
+
+  /* Hide interactive controls, sidebar, inputs, and animations during PDF export */
+  nav,
+  aside,
+  header,
+  footer,
+  .pq-export-btn,
+  #btn-audit-system,
+  #btn-file-picker,
+  #btn-folder-picker,
+  #audit-loading-indicator,
+  .universal-input-container,
+  textarea,
+  input,
+  button,
+  .pq-spinner {
+    display: none !important;
+  }
+
+  /* Expand and cleanly render audit dashboard and report panels */
+  main,
+  #audit-results-dashboard,
+  #report-card-container,
+  [id^="card-"] {
+    display: block !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  h1, h2, h3, h4, h5, p, span, div, td, th {
+    text-shadow: none !important;
+    color: #0f172a !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 10px !important;
+    color: #0f172a !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+

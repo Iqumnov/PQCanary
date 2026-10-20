@@ -1,0 +1,105 @@
+*pqcanary.txt*  Real-time Post-Quantum Cryptographic Security Auditor for Neovim/Vim
+
+==============================================================================
+CONTENTS                                                    *pqcanary-contents*
+
+    1. Introduction ........................................ |pqcanary-intro|
+    2. Installation ........................................ |pqcanary-install|
+    3. Configuration ....................................... |pqcanary-config|
+    4. Commands ............................................ |pqcanary-commands|
+    5. Diagnostics & Quickfix .............................. |pqcanary-diagnostics|
+    6. License & Authorship ................................ |pqcanary-license|
+
+==============================================================================
+1. INTRODUCTION                                                *pqcanary-intro*
+
+PQCanary is an industrial post-quantum cryptographic security platform. This
+plugin brings real-time static code scanning, diagnostic annotations, Quickfix
+navigation, and automated NIST FIPS PQC remediation directly to your editor.
+
+Features:
+- Real-time buffer scanning on TextChanged (debounced 200ms)
+- 193+ detection signatures (RSA, ECC, Diffie-Hellman, DSA, NIST PQC)
+- Built-in Neovim `vim.diagnostic` integration
+- Quickfix and Location list integration (:copen / :lopen)
+- Automated PQC remediation via `:PQCanaryFix`
+- Security health score / grade badge calculation (:PQCanaryStatus)
+- Zero external dependencies: works out-of-the-box with pure Lua and vim.regex
+
+==============================================================================
+2. INSTALLATION                                              *pqcanary-install*
+
+Lazy.nvim:
+>lua
+    {
+      "pqcanary/pqcanary",
+      config = function()
+        require("pqcanary").setup({
+          enable_realtime = true,
+          debounce_ms = 200,
+        })
+      end
+    }
+<
+
+Packer.nvim:
+>lua
+    use {
+      "pqcanary/pqcanary",
+      config = function()
+        require("pqcanary").setup()
+      end
+    }
+<
+
+Vim-Plug (Classic Vim / Neovim):
+>vim
+    Plug 'pqcanary/pqcanary'
+<
+
+==============================================================================
+3. CONFIGURATION                                              *pqcanary-config*
+
+Default configuration table:
+>lua
+    require("pqcanary").setup({
+      enable_realtime = true,   -- Run diagnostic scan as you type
+      debounce_ms = 200,        -- Debounce delay for typing events
+      virtual_text = true,      -- Show inline diagnostic virtual text
+      signs = true,             -- Show signs in the gutter
+      underline = true,         -- Underline vulnerable symbols
+      min_severity = "INFO",    -- Minimum severity level ("CRITICAL"|"HIGH"|"MEDIUM"|"LOW"|"INFO")
+      auto_quickfix = false,    -- Automatically open quickfix on scan
+      prefer_cli = false,       -- Use pqcanary CLI binary if available
+    })
+<
+
+==============================================================================
+4. COMMANDS                                                *pqcanary-commands*
+
+:PQCanaryScan                                                  *:PQCanaryScan*
+    Scan current buffer immediately and update diagnostics.
+
+:PQCanaryQuickfix                                          *:PQCanaryQuickfix*
+    Populate and open the Quickfix list with all detected quantum issues.
+
+:PQCanaryFix                                                    *:PQCanaryFix*
+    Apply automated post-quantum remediation to the vulnerability under the cursor.
+    For instance, automatically replaces RSA/ECC with ML-KEM-768 or ML-DSA-65.
+
+:PQCanaryStatus                                              *:PQCanaryStatus*
+    Display security posture breakdown and letter grade (A+ through F).
+
+:PQCanaryToggle                                              *:PQCanaryToggle*
+    Toggle real-time linting on and off.
+
+==============================================================================
+5. LICENSE & AUTHORSHIP                                      *pqcanary-license*
+
+Copyright (C) 2026 Matvei Igumnov.
+Licensed under the Apache License, Version 2.0.
+All derivative works or forks must preserve authorship attribution to
+Matvei Igumnov in accordance with Section 4 of the Apache License.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

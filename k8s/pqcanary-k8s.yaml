@@ -1,0 +1,250 @@
+# PQCanary Kubernetes Cluster Manifest
+# Copyright (C) 2026 Matvei Igumnov - Apache License 2.0
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pqcanary
+  labels:
+    app.kubernetes.io/name: pqcanary
+    app.kubernetes.io/part-of: pqcanary-security-platform
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pqcanary-config
+  namespace: pqcanary
+data:
+  PQCANARY_PORT: "8080"
+  RUST_LOG: "info,pqcanary=debug"
+  PQCANARY_WEB_DIR: "/app/web_dist"
+  SCAN_CONCURRENCY: "8"
+  CACHE_TTL_SECONDS: "3600"
+  PQCANARY_TEMP_DIR: "/tmp/pqcanary_git_scans"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pqcanary-daemon
+  namespace: pqcanary
+  labels:
+    app.kubernetes.io/name: pqcanary
+    app.kubernetes.io/component: security-daemon
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pqcanary
+      app.kubernetes.io/component: security-daemon
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pqcanary
+        app.kubernetes.io/component: security-daemon
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: pqcanary
+          image: pqcanary/pqcanary:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http-api
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: pqcanary-config
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http-api
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http-api
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pqcanary-service
+  namespace: pqcanary
+  labels:
+    app.kubernetes.io/name: pqcanary
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http-api
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: http-api
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: pqcanary
+    app.kubernetes.io/component: security-daemon
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pqcanary-ingress
+  namespace: pqcanary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+spec:
+  rules:
+    - host: pqcanary.internal
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pqcanary-service
+                port:
+                  number: 8080
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: pqcanary-hpa
+  namespace: pqcanary
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: pqcanary-daemon
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pqcanary-pdb
+  namespace: pqcanary
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pqcanary
+      app.kubernetes.io/component: security-daemon
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pqcanary-network-policy
+  namespace: pqcanary
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: pqcanary
+      app.kubernetes.io/component: security-daemon
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    # Defense-in-depth: allow external HTTPS/HTTP/SSH for probes and git clones,
+    # but strictly block internal private subnets, cloud metadata (169.254.169.254), and loopback
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 127.0.0.0/8
+              - 169.254.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 22
+    # Allow DNS resolution within cluster
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

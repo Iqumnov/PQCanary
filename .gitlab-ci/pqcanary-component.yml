@@ -1,0 +1,38 @@
+# PQCanary GitLab CI/CD Component Template
+# Enterprise Post-Quantum Cryptographic Audit & SAST Security Scanner
+
+spec:
+  inputs:
+    stage:
+      default: test
+      description: 'The CI/CD pipeline stage to run PQCanary in.'
+    scan_path:
+      default: '.'
+      description: 'Directory path to scan for cryptographic assets.'
+    fail_on:
+      default: 'new'
+      description: 'Quality gate threshold: critical, high, new, or none.'
+
+---
+
+pqcanary_pqc_audit:
+  stage: $[[ inputs.stage ]]
+  image: rust:1.80-slim-bookworm
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git curl build-essential
+    - cargo install --path ./cli --bin pqcanary || cargo build --release -p pqcanary-cli
+    - cp target/release/pqcanary /usr/local/bin/pqcanary || true
+  script:
+    - echo "Running PQCanary cryptographic security scan..."
+    - pqcanary scan "$[[ inputs.scan_path ]]" --format json --output gl-sast-report.json --fail-on "$[[ inputs.fail_on ]]"
+    - pqcanary cbom "$[[ inputs.scan_path ]]" --format json --output cyclonedx-cbom-1.6.json
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+    paths:
+      - gl-sast-report.json
+      - cyclonedx-cbom-1.6.json
+    expire_in: 30 days
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_MERGE_REQUEST_IID

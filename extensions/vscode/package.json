@@ -1,0 +1,112 @@
+{
+  "name": "pqcanary-vscode",
+  "displayName": "PQCanary: Post-Quantum Cryptographic Auditor",
+  "description": "Real-time post-quantum cryptographic security analysis, AST diagnostics, and NIST FIPS 203/204 automated remediation in VS Code.",
+  "version": "1.0.0",
+  "publisher": "igumnov-matvei",
+  "author": "Matvei Igumnov",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Iqumnov/PQCanary.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Linters",
+    "Security",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "post-quantum",
+    "cryptography",
+    "security",
+    "audit",
+    "nist",
+    "fips-203",
+    "fips-204",
+    "rsa",
+    "quantum"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pqcanary.scanCurrentFile",
+        "title": "PQCanary: Scan Current File for Post-Quantum Vulnerabilities",
+        "category": "PQCanary"
+      },
+      {
+        "command": "pqcanary.scanWorkspace",
+        "title": "PQCanary: Scan Entire Workspace for Cryptographic Deficits",
+        "category": "PQCanary"
+      },
+      {
+        "command": "pqcanary.openWebDashboard",
+        "title": "PQCanary: Open Post-Quantum Web Dashboard",
+        "category": "PQCanary"
+      },
+      {
+        "command": "pqcanary.meshStatus",
+        "title": "PQCanary: Inspect Distributed PQMesh Fleet Status",
+        "category": "PQCanary"
+      }
+    ],
+    "configuration": {
+      "title": "PQCanary Post-Quantum Auditor",
+      "properties": {
+        "pqcanary.enableRealtime": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time post-quantum cryptographic diagnostics as you type."
+        },
+        "pqcanary.enableMeshSync": {
+          "type": "boolean",
+          "default": true,
+          "description": "Synchronize cryptographic findings and heartbeats with the local PQMesh fleet bus."
+        },
+        "pqcanary.meshUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "URL to the PQCanary core daemon and PQMesh event bus."
+        },
+        "pqcanary.minSeverity": {
+          "type": "string",
+          "enum": [
+            "INFO",
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ],
+          "default": "LOW",
+          "description": "Minimum severity threshold to report in editor diagnostics."
+        },
+        "pqcanary.debounceMs": {
+          "type": "number",
+          "default": 200,
+          "description": "Debounce delay in milliseconds before scanning on document changes."
+        },
+        "pqcanary.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "URL to PQCanary local or remote web server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/vscode": "^1.140.0",
+    "typescript": "^5.3.0"
+  }
+}

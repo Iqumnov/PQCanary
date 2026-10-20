@@ -1,0 +1,73 @@
+{
+  "name": "PQCanary | Post-Quantum Cryptographic Scanner",
+  "short_name": "PQCanary",
+  "description": "Enterprise post-quantum cryptographic auditor, CBOM generator, and NIST FIPS 203/204 migration guardrail.",
+  "id": "/?source=pwa",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "theme_color": "#F59E0B",
+  "background_color": "#000000",
+  "categories": [
+    "security",
+    "developer",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/PQCanary.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Launch Cryptographic Audit",
+      "short_name": "Audit",
+      "description": "Scan code snippet, local repository, or CBOM for quantum risks",
+      "url": "/?action=audit",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "NIST Rules Catalog",
+      "short_name": "Rules",
+      "description": "Browse 193+ post-quantum and classical cryptographic audit rules",
+      "url": "/?tab=rules",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

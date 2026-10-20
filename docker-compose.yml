@@ -1,0 +1,65 @@
+# PQCanary Production Microservice Stack
+# Copyright (C) 2026 Matvei Igumnov - Apache License 2.0
+
+version: "3.8"
+
+services:
+  # ─── PQCanary Core Security Daemon (REST API & Native Scanner) ─────────────
+  pqcanary-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pqcanary/pqcanary:latest
+    container_name: pqcanary-daemon
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PQCANARY_PORT=8080
+      - PQCANARY_WEB_DIR=/app/web_dist
+      - PQCANARY_API_TOKEN=${PQCANARY_API_TOKEN:-}
+      - REDIS_URL=redis://pqcanary-redis:6379
+      - RUST_LOG=info
+    volumes:
+      - pqcanary-scans:/tmp
+      - web-assets:/app/web_dist:ro
+    depends_on:
+      - pqcanary-redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # ─── High-Performance Nginx Sidecar (Full Hosted Mode) ─────────────────────
+  pqcanary-nginx:
+    image: nginx:alpine
+    container_name: pqcanary-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - web-assets:/usr/share/nginx/html:ro
+    depends_on:
+      - pqcanary-server
+
+  # ─── Distributed Task Queue Redis Broker ───────────────────────────────────
+  pqcanary-redis:
+    image: redis:7-alpine
+    container_name: pqcanary-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  pqcanary-scans:
+  web-assets:
+  redis-data:
+
+networks:
+  default:
+    name: pqcanary-network

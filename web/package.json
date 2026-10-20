@@ -1,0 +1,36 @@
+{
+  "name": "pqcanary-web",
+  "version": "0.1.0",
+  "description": "SolidStart web interface for PQCanary",
+  "author": "Matvei Igumnov",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vinxi dev --host",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:android:init": "tauri android init --ci",
+    "tauri:android:build": "tauri android build --apk",
+    "build:wasm": "node -e \"console.log('Using pre-built WebAssembly package in core/pkg')\""
+  },
+  "dependencies": {
+    "@solidjs/meta": "^0.29.3",
+    "@solidjs/router": "^0.13.3",
+    "@solidjs/start": "^1.3.2",
+    "@tauri-apps/api": "^2.0.0-beta.0",
+    "lenis": "^1.3.26",
+    "solid-js": "^1.8.17",
+    "vinxi": "^0.5.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "vite": "^8.1.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module"
+}

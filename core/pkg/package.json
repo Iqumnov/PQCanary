@@ -1,0 +1,17 @@
+{
+  "name": "pqcanary-core-wasm",
+  "version": "0.1.0",
+  "description": "Pre-built WebAssembly and browser bindings for PQCanary post-quantum cryptographic security engine",
+  "author": "Matvei Igumnov",
+  "license": "Apache-2.0",
+  "main": "pqcanary_core.js",
+  "types": "pqcanary_core.d.ts",
+  "files": [
+    "pqcanary_core_bg.wasm",
+    "pqcanary_core.js",
+    "pqcanary_core.d.ts"
+  ],
+  "module": "pqcanary_core.js",
+  "type": "module",
+  "sideEffects": false
+}

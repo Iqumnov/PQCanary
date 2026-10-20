@@ -1,0 +1,92 @@
+name: "PQCanary Cryptographic & Post-Quantum Security Scanner"
+description: "Audit repositories for post-quantum vulnerabilities, weak classical ciphers, cryptographic CVEs, and side-channel leakage with automated SARIF GitHub Code Scanning integration."
+author: "Matvei Igumnov"
+branding:
+  icon: "shield"
+  color: "blue"
+
+inputs:
+  path:
+    description: "Target directory or file path to audit"
+    required: false
+    default: "."
+  format:
+    description: "Report output format: sarif, json, markdown, html, csv, summary"
+    required: false
+    default: "sarif"
+  output:
+    description: "Output report filepath"
+    required: false
+    default: "pqcanary-report.sarif"
+  fail-on:
+    description: "Failure severity threshold: none, low, medium, high, critical"
+    required: false
+    default: "high"
+  baseline:
+    description: "Optional baseline report file to suppress previously known findings"
+    required: false
+    default: ""
+  upload-sarif:
+    description: "Automatically upload SARIF report to GitHub Security / Code Scanning tab"
+    required: false
+    default: "true"
+  mesh-sync:
+    description: "Stream CI/CD findings into the corporate PQMesh distributed fleet bus"
+    required: false
+    default: "false"
+  mesh-endpoint:
+    description: "Endpoint of central PQMesh daemon"
+    required: false
+    default: "http://localhost:8080"
+  token:
+    description: "GitHub Token for uploading SARIF (defaults to github.token)"
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up PQCanary CLI
+      shell: bash
+      run: |
+        echo "::group::Configuring PQCanary Scanner"
+        if command -v pqcanary &> /dev/null; then
+          echo "PQCanary is already installed on runner."
+        else
+          echo "Building / verifying native PQCanary binary..."
+          cargo build --release --bin pqcanary || echo "Using prebuilt runner environment"
+        fi
+        echo "::endgroup::"
+
+    - name: Run PQCanary Security Audit
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_MESH_SYNC: ${{ inputs.mesh-sync }}
+        PQCANARY_API_URL: ${{ inputs.mesh-endpoint }}
+      shell: bash
+      run: |
+        echo "::group::Executing PQCanary Cryptographic Analysis"
+        ARGS=("scan" "$INPUT_PATH" "--format" "$INPUT_FORMAT" "--output" "$INPUT_OUTPUT" "--fail-on" "$INPUT_FAIL_ON")
+        if [ -n "$INPUT_BASELINE" ]; then
+          ARGS+=("--baseline" "$INPUT_BASELINE")
+        fi
+        if [ "$INPUT_MESH_SYNC" = "true" ]; then
+          ARGS+=("--sync")
+        fi
+        echo "Running: pqcanary ${ARGS[*]}"
+        pqcanary "${ARGS[@]}"
+        EXIT_CODE=$?
+        echo "::endgroup::"
+        exit $EXIT_CODE
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: ${{ inputs.format == 'sarif' && inputs.upload-sarif == 'true' && (success() || failure()) }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.output }}
+        category: "PQCanary"
+        token: ${{ inputs.token }}
