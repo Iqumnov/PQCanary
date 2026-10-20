@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 pub const WASM_PAGE_SIZE: usize = 65_536; // 64 KiB — defined by the Wasm spec
 pub const WASM_MAX_PAGES: usize = 65_536; // Maximum 4 GiB total (65536 × 64KiB)
-pub const WASM_MAX_MEMORY: usize = WASM_MAX_PAGES * WASM_PAGE_SIZE;
+pub const WASM_MAX_MEMORY: u64 = (WASM_MAX_PAGES as u64) * (WASM_PAGE_SIZE as u64);
 
 // ============================================================
 // Formal Violation Types
