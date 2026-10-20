@@ -3205,6 +3205,7 @@ fn test_ebpf_sniffer_handshake_parsing() {
 }
 
 #[test]
+#[allow(clippy::field_reassign_with_default)]
 fn test_k8s_mesh_remediation_generation() {
     use crate::scanner::k8s_mesh::{K8sMeshEngine, K8sMeshConfig, K8sIngressPlatform};
 
@@ -3269,6 +3270,7 @@ fn test_hsm_auditor_token_mechanisms() {
 }
 
 #[test]
+#[allow(clippy::field_reassign_with_default)]
 fn test_runtime_shim_c_generation() {
     use crate::scanner::runtime_shim::{RuntimeShimGenerator, RuntimeShimConfig, ShimInterceptionMode};
 
