@@ -1,5 +1,5 @@
 # ─── Stage 1: Build Rust Binaries (CLI, REST Daemon, MCP Server) ───────────────
-FROM rust:1-bullseye AS rust-builder
+FROM rust:1-bookworm AS rust-builder
 WORKDIR /usr/src/pqcanary
 
 # Install Z3 and build dependencies (including libudev-dev for serialport)
@@ -19,19 +19,23 @@ COPY web/src-tauri ./web/src-tauri
 RUN cargo build --release --bin pqcanary --bin pqcanary-mcp
 
 # ─── Stage 2: Build SolidStart Web Application ─────────────────────────────────
-FROM node:20-bullseye AS web-builder
-WORKDIR /usr/src/pqcanary/web
+FROM node:20-bookworm AS web-builder
+WORKDIR /usr/src/pqcanary
 
-COPY web/package.json web/pnpm-lock.yaml* ./
-RUN npm install -g pnpm && pnpm install
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY web ./
-RUN pnpm run build
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY web/package.json ./web/
 
+RUN pnpm install --frozen-lockfile
+
+COPY web ./web
+COPY core/pkg ./core/pkg
+RUN cd web && pnpm run build
 
 
 # ─── Stage 3: Final Lightweight Microservice Image ──────────────────────────────
-FROM debian:bullseye-slim AS runner
+FROM debian:bookworm-slim AS runner
 
 # OCI Standard Image Annotations
 LABEL org.opencontainers.image.title="PQCanary" \
@@ -40,16 +44,16 @@ LABEL org.opencontainers.image.title="PQCanary" \
       org.opencontainers.image.authors="Matvei Igumnov" \
       org.opencontainers.image.vendor="Matvei Igumnov" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.source="https://github.com/pqcanary/pqcanary"
+      org.opencontainers.image.source="https://github.com/Iqumnov/PQCanary"
 
 WORKDIR /app
 
-# Install runtime dependencies: Z3 SMT solver, Git, OpenSSL, libudev, CA certificates
+# Install runtime dependencies: Z3 SMT solver, Git, OpenSSL 3, libudev, CA certificates
 RUN apt-get update && apt-get install -y \
     z3 \
     git \
     ca-certificates \
-    libssl1.1 \
+    libssl3 \
     libudev1 \
     curl \
     && rm -rf /var/lib/apt/lists/* \
