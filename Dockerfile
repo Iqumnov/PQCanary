@@ -22,7 +22,7 @@ RUN cargo build --release --bin pqcanary --bin pqcanary-mcp
 FROM node:20-bookworm AS web-builder
 WORKDIR /usr/src/pqcanary
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY web/package.json ./web/
