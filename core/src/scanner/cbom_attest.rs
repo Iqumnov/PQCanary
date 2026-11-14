@@ -51,12 +51,12 @@ impl CbomAttestor {
             "predicateType": predicate_type,
             "predicate": {
                 "builder": {
-                    "id": "https://github.com/pqcanary/pqcanary-engine@v0.1.0"
+                    "id": "https://github.com/Iqumnov/PQCanary@v0.1.0"
                 },
-                "buildType": "https://pqcanary.io/attestation/cbom/v1",
+                "buildType": "https://github.com/Iqumnov/PQCanary/attestation/cbom/v1",
                 "invocation": {
                     "configSource": {
-                        "uri": format!("git+https://github.com/pqcanary/{}@main", project_name),
+                        "uri": format!("git+https://github.com/Iqumnov/{}@main", project_name),
                         "digest": { "sha1": &sha256_hex[..40] }
                     }
                 },

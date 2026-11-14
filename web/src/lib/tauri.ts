@@ -1100,7 +1100,7 @@ export async function exportSarif(findings: ComprehensiveFinding[], repository?:
           driver: {
             name: 'PQCanary',
             version: '0.1.0',
-            informationUri: 'https://github.com/pqcanary/pqcanary',
+            informationUri: 'https://github.com/Iqumnov/PQCanary',
             rules: Array.from(new Set(findings.map(f => f.rule_id || f.vulnerability_class))).map(ruleId => ({
               id: ruleId,
               shortDescription: { text: `Post-Quantum Cryptographic Rule ${ruleId}` },

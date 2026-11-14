@@ -32,7 +32,7 @@ Features:
 Lazy.nvim:
 >lua
     {
-      "pqcanary/pqcanary",
+      "Iqumnov/PQCanary",
       config = function()
         require("pqcanary").setup({
           enable_realtime = true,
@@ -45,7 +45,7 @@ Lazy.nvim:
 Packer.nvim:
 >lua
     use {
-      "pqcanary/pqcanary",
+      "Iqumnov/PQCanary",
       config = function()
         require("pqcanary").setup()
       end
@@ -54,7 +54,7 @@ Packer.nvim:
 
 Vim-Plug (Classic Vim / Neovim):
 >vim
-    Plug 'pqcanary/pqcanary'
+    Plug 'Iqumnov/PQCanary'
 <
 
 ==============================================================================

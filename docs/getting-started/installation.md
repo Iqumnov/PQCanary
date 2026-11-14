@@ -4,7 +4,30 @@ This document describes how to install, build, and deploy PQCanary across suppor
 
 ---
 
-## 1. System Requirements
+## 1. Quick Install (Pre-compiled Binary)
+
+To install PQCanary without compiling from source or installing the Rust toolchain:
+
+```bash
+# Universal Standalone Installer (Linux, Void Linux, Alpine, macOS)
+curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh
+```
+
+The script automatically detects your operating system, CPU architecture, and C library (`glibc` vs `musl`), downloads the appropriate pre-compiled release artifact, and installs the `pqcanary` binary into `/usr/local/bin` (or `~/.local/bin`).
+
+### Void Linux & Alpine Linux (Musl Support)
+PQCanary provides statically-linked binaries (`x86_64-unknown-linux-musl`) that run out of the box on Void Linux (musl flavor) and Alpine Linux with zero dynamic dependencies.
+
+To build an `xbps` package for Void Linux:
+```bash
+# Clone void-packages and use the PQCanary template
+./xbps-src pkg pqcanary
+xi pqcanary
+```
+
+---
+
+## 2. System Requirements
 
 ### Supported Operating Systems
 - Linux (x86_64, AArch64) - Ubuntu 20.04+, Debian 11+, RHEL 8+, Alpine 3.18+

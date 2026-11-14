@@ -69,7 +69,7 @@ metadata:
   namespace: {}
   labels:
     app.kubernetes.io/managed-by: pqcanary
-    security.pqcanary.io/quantum-ready: "true"
+    security.pqcanary.pages.dev/quantum-ready: "true"
 spec:
   workloadSelector:
     labels:
@@ -195,7 +195,7 @@ metadata:
   name: {}
   namespace: {}
   labels:
-    security.pqcanary.io/quantum-ready: "true"
+    security.pqcanary.pages.dev/quantum-ready: "true"
 spec:
   gatewayClassName: istio
   listeners:

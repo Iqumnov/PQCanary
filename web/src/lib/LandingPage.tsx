@@ -81,6 +81,18 @@ export function LandingPage(props: LandingPageProps) {
             }
           },
           {
+            heading: "Universal Standalone Binary Installer (Zero Dependencies)",
+            description: "Install pre-compiled native binaries on Linux (glibc & Void/Alpine musl) and macOS with a single shell command:",
+            codeSnippet: {
+              lang: "bash",
+              code: `# Auto-detects OS, architecture, and C library (glibc vs musl)
+curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh
+
+# Verify installation
+pqcanary --version`
+            }
+          },
+          {
             heading: "Rust Toolchain & Cargo Installation",
             description: "If you have a Rust development environment (1.80.0+), install the CLI and MCP server directly via Cargo:",
             codeSnippet: {
@@ -653,7 +665,7 @@ pqcanary constant-time --routine mlkem768_decaps_inner --samples 50000`
             codeSnippet: {
               lang: "bash",
               code: `# Attest CBOM with in-toto SLSA Provenance v1.0 and Sigstore Cosign
-pqcanary cbom-attest ./cbom.json --project enterprise-core --signer sec-ops@enterprise.internal`
+pqcanary cbom-attest ./cbom.json --project enterprise-core --signer iqumnov@proton.me`
             }
           }
         ]
@@ -1137,11 +1149,11 @@ pqcanary scan ./src/crypto.rs --strict-nist`
               color: props.isDarkMode ? "#34d399" : "#047857"
             }}
           >
-            <span>$ cargo install pqcanary-cli</span>
+            <span>$ curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh</span>
             <button
               type="button"
               class="pq-landing-action-btn"
-              onClick={() => copyToClipboard("cargo install pqcanary-cli", "hero-cli")}
+              onClick={() => copyToClipboard("curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh", "hero-cli")}
               title="Copy install command"
               aria-label="Copy install command"
               style={{

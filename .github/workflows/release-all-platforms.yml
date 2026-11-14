@@ -50,11 +50,19 @@ jobs:
         working-directory: ./web
         run: pnpm dlx @tauri-apps/cli build --bundles msi,nsis
 
+      - name: Package Windows CLI Archive
+        shell: bash
+        run: |
+          mkdir -p windows-dist
+          cp target/release/pqcanary.exe windows-dist/
+          cp target/release/pqcanary-mcp.exe windows-dist/
+          7z a windows-dist/pqcanary-windows-x86_64.zip ./target/release/pqcanary.exe ./target/release/pqcanary-mcp.exe
+
       - name: Upload Windows CLI Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pqcanary-windows-x64-cli
-          path: target/release/pqcanary.exe
+          path: windows-dist/*
 
       - name: Upload Windows Desktop Installers
         uses: actions/upload-artifact@v4
@@ -62,9 +70,9 @@ jobs:
           name: pqcanary-windows-installers
           path: web/src-tauri/target/release/bundle/*/*
 
-  # ─── 2. Linux Release Matrix (CLI, DEB, AppImage) ──────────────────────────
+  # ─── 2. Linux Release Matrix (CLI GNU, Musl Static, DEB, AppImage) ────────
   build-linux:
-    name: Build Linux (CLI, DEB, AppImage)
+    name: Build Linux (GNU, Musl Static, DEB, AppImage)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -72,12 +80,12 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libudev-dev libayatana-appindicator3-dev librsvg2-dev z3 libz3-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libudev-dev libayatana-appindicator3-dev librsvg2-dev z3 libz3-dev musl-tools
 
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: x86_64-unknown-linux-gnu
+          targets: x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -93,8 +101,14 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Native CLI & MCP
-        run: cargo build --release --bin pqcanary --bin pqcanary-mcp
+      - name: Build Native CLI & MCP (GNU & Musl Static)
+        run: |
+          cargo build --release --target x86_64-unknown-linux-gnu --bin pqcanary --bin pqcanary-mcp
+          cargo build --release --target x86_64-unknown-linux-musl --bin pqcanary --bin pqcanary-mcp
+          mkdir -p linux-dist
+          tar -czvf linux-dist/pqcanary-linux-x86_64.tar.gz -C target/x86_64-unknown-linux-gnu/release pqcanary pqcanary-mcp
+          tar -czvf linux-dist/pqcanary-linux-x86_64-musl.tar.gz -C target/x86_64-unknown-linux-musl/release pqcanary pqcanary-mcp
+          cp target/x86_64-unknown-linux-gnu/release/pqcanary linux-dist/pqcanary-linux-x64-cli
 
       - name: Build Web UI
         working-directory: ./web
@@ -108,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pqcanary-linux-x64-cli
-          path: target/release/pqcanary
+          path: linux-dist/*
 
       - name: Upload Linux Desktop Packages
         uses: actions/upload-artifact@v4
@@ -207,23 +221,44 @@ jobs:
           name: pqcanary-web-dist
           path: web/.output/public/
 
-  # ─── 5. Multi-Platform Docker Container ────────────────────────────────────
+  # ─── 5. Multi-Platform Docker Container & GHCR Push ────────────────────────
   build-docker:
-    name: Build & Test Multi-Service Docker
+    name: Build & Publish Docker Container
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker Image
+      - name: Log in to GitHub Container Registry
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: false
-          tags: pqcanary/pqcanary:latest
+          push: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          tags: ${{ steps.meta.outputs.tags || 'pqcanary/pqcanary:latest' }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   # ─── 6. GitHub Release Publisher ──────────────────────────────────────────
   publish-release:
@@ -266,11 +301,13 @@ jobs:
           name: pqcanary-android-release-apk
           path: release-assets/android
 
-      - name: Flatten & Prepare Release Assets
+      - name: Flatten & Prepare Release Assets with Checksums
         run: |
           mkdir -p dist
           find release-assets/ -type f -exec cp {} dist/ \;
-          ls -la dist/
+          cd dist
+          sha256sum * > SHA256SUMS.txt 2>/dev/null || true
+          ls -la
 
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
@@ -279,4 +316,3 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
-

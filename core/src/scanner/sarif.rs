@@ -178,7 +178,7 @@ impl SarifGenerator {
                         pat.def.description, pat.def.remediation
                     ),
                 },
-                help_uri: format!("https://github.com/pqcanary/pqcanary/tree/main/docs/rules/{}.md", pat.def.id),
+                help_uri: format!("https://github.com/Iqumnov/PQCanary/tree/main/docs/rules/{}.md", pat.def.id),
                 default_configuration: SarifDefaultConfig {
                     level: Self::severity_to_sarif_level(pat.def.severity).to_string(),
                 },
@@ -216,7 +216,7 @@ impl SarifGenerator {
                             finding.vulnerability_class, finding.severity, finding.description, finding.remediation
                         ),
                     },
-                    help_uri: "https://github.com/pqcanary/pqcanary".to_string(),
+                    help_uri: "https://github.com/Iqumnov/PQCanary".to_string(),
                     default_configuration: SarifDefaultConfig {
                         level: Self::severity_to_sarif_level(&finding.severity).to_string(),
                     },
@@ -294,7 +294,7 @@ impl SarifGenerator {
                     driver: SarifDriver {
                         name: "PQCanary".to_string(),
                         version: env!("CARGO_PKG_VERSION").to_string(),
-                        information_uri: "https://github.com/pqcanary/pqcanary".to_string(),
+                        information_uri: "https://github.com/Iqumnov/PQCanary".to_string(),
                         semantic_version: env!("CARGO_PKG_VERSION").to_string(),
                         rules: sorted_rules,
                     },

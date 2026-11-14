@@ -513,7 +513,7 @@ impl MarkdownReporter {
             );
         }
 
-        md.push_str("\n---\n*Report generated automatically by [PQCanary](https://github.com/pqcanary/pqcanary).*");
+        md.push_str("\n---\n*Report generated automatically by [PQCanary](https://github.com/Iqumnov/PQCanary).*");
         md
     }
 }

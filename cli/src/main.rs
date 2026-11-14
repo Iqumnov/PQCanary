@@ -77,7 +77,7 @@ use pqcanary_core::scanner::kmip_wire_protocol::KmipWireProtocol;
                   concolic symbolic execution with Z3, Lean 4 formal proofs, Landauer thermodynamic modeling,\n\
                   QPU circuit simulation, and automated remediation patches.",
     version = "0.1.0",
-    author = "Matvei Igumnov <contact@pqcanary.io>",
+    author = "Matvei Igumnov <iqumnov@proton.me>",
 )]
 struct Cli {
     #[command(subcommand)]
@@ -687,7 +687,7 @@ enum Commands {
         project: String,
 
         /// Signer OIDC identity email.
-        #[arg(short, long, default_value = "security@enterprise.com")]
+        #[arg(short, long, default_value = "iqumnov@proton.me")]
         signer: String,
 
         /// Output DSSE envelope file path.
@@ -1003,7 +1003,7 @@ fn severity_rank(s: &str) -> u8 {
 fn print_banner() {
     eprintln!("╔════════════════════════════════════════════════════════════╗");
     eprintln!("║    PQCanary Post-Quantum Cryptographic Platform v0.1.0     ║");
-    eprintln!("║    github.com/pqcanary/pqcanary                            ║");
+    eprintln!("║    github.com/Iqumnov/PQCanary                             ║");
     eprintln!("╚════════════════════════════════════════════════════════════╝");
 }
 

@@ -3468,7 +3468,7 @@ fn test_cbom_sigstore_attestation() {
     use crate::scanner::cbom_attest::CbomAttestor;
 
     let sample_cbom = r#"{"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"components":[]}"#;
-    let envelope = CbomAttestor::attest_cbom(sample_cbom, "fintech-vault", "audit@fintech.corp");
+    let envelope = CbomAttestor::attest_cbom(sample_cbom, "fintech-vault", "iqumnov@proton.me");
 
     assert!(!envelope.cbom_artifact_sha256.is_empty());
     assert!(envelope.dsse_envelope_json.contains("payloadType"));

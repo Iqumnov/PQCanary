@@ -4,7 +4,20 @@ This guide walks through running your first post-quantum cryptographic audit usi
 
 ---
 
-## 1. Running Your First Scan
+## 1. Quick Installation
+
+Before scanning, ensure the `pqcanary` binary is installed:
+
+```bash
+# Universal Standalone Installer (Linux, Void Linux, Alpine, macOS)
+curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh
+```
+
+For toolchain or source installation options, refer to the [Installation Guide](installation.md).
+
+---
+
+## 2. Running Your First Scan
 
 By default, running `pqcanary scan` against a directory executes all enabled engines (Tree-sitter AST, regular expression patterns, dependency supply-chain scanners, certificate decoders, and linear memory sandbox checks):
 
@@ -33,7 +46,7 @@ Quantum Readiness Posture: TRANSITIONING (Score: 68.0/100)
 
 ---
 
-## 2. Generating Compliance Artifacts
+## 3. Generating Compliance Artifacts
 
 PQCanary natively outputs structured compliance artifacts without needing third-party converters.
 
@@ -69,7 +82,7 @@ pqcanary scan ./src --format csv --output inventory.csv
 
 ---
 
-## 3. Classifying Specific Algorithms
+## 4. Classifying Specific Algorithms
 
 You can quickly query PQCanary to classify any cryptographic algorithm against NIST standards and determine required quantum resources:
 
@@ -87,7 +100,7 @@ pqcanary classify ML-KEM-768
 
 ---
 
-## 4. Establishing a Baseline (Differential Auditing)
+## 5. Establishing a Baseline (Differential Auditing)
 
 When adopting PQCanary on an existing enterprise codebase with legacy cryptography, you can establish a baseline to track new regressions without failing builds on existing debt:
 
@@ -104,7 +117,7 @@ If a developer introduces a new classical RSA, MD5, or unmasked algorithm, the s
 
 ---
 
-## 5. Automated Code Remediation
+## 6. Automated Code Remediation
 
 PQCanary includes a semantic code patcher that automatically resolves known insecure cryptographic patterns (e.g., replacing MD5 with SHA-256, DES with AES-256-GCM, and `Math.random` with secure random):
 
@@ -120,7 +133,7 @@ pqcanary patch src/crypto.js
 
 ---
 
-## 6. Active Network Probing
+## 7. Active Network Probing
 
 Verify whether remote network endpoints have deployed post-quantum hybrid key exchange:
 
@@ -138,7 +151,7 @@ pqcanary probe ssh github.com:22
 
 ---
 
-## 7. Next Steps
+## 8. Next Steps
 
 - Consult the [System Architecture](../architecture/system-architecture.md) for details on the multi-engine pipeline.
 - Review the [Configuration Schema](../reference/configuration-schema.md) to set up `.pqcanary.yaml`.

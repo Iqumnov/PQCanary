@@ -504,7 +504,7 @@ pqcanary cbom-attest <CBOM_PATH> [--project <NAME>] [--signer <EMAIL>] [-f <FORM
 **Options:**
 - `<CBOM_PATH>`: Path to input CycloneDX 1.6 CBOM JSON file.
 - `--project <NAME>`: Project or artifact name (default: `pqcanary-inspected-project`).
-- `--signer <EMAIL>`: Fulcio identity or signer email (default: `security@enterprise.internal`).
+- `--signer <EMAIL>`: Fulcio identity or signer email (default: `iqumnov@proton.me`).
 - `-f, --format <FORMAT>`: Output format (`markdown`, `json`, or `text`).
 - `-o, --output <FILE>`: Destination output file path.
 

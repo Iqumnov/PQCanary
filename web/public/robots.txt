@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pqcanary.io/sitemap.xml
+Sitemap: https://pqcanary.pages.dev/sitemap.xml

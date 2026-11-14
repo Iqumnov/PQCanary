@@ -37,7 +37,7 @@ export function triggerFileDownload(content: string, filename: string, mimeType:
 /** Generates standardized, full metadata PQCanary Audit Report JSON */
 export function generateFullAuditJson(bundle: FullAuditReportBundle): string {
   const report = {
-    $schema: 'https://pqcanary.io/schema/audit-report-v1.json',
+    $schema: 'https://raw.githubusercontent.com/Iqumnov/PQCanary/main/schema/audit-report-v1.json',
     format: 'pqcanary-audit-report',
     version: '1.0.0',
     generator: 'PQCanary Enterprise Post-Quantum Cryptographic Security Platform',

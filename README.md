@@ -121,12 +121,20 @@ Access the documentation directly at [docs/README.md](docs/README.md).
 
 ## Quickstart
 
-### 1. Build from Source
+### 1. Universal Quick Install (Linux, macOS, Void Linux, Alpine)
+
+Install the pre-compiled standalone binary with zero dependencies:
+
+```bash
+curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh
+```
+
+### 2. Build from Source
 
 ```bash
 # Clone the repository
 git clone https://github.com/Iqumnov/PQCanary.git
-cd pqcanary
+cd PQCanary
 
 # Build release binaries
 cargo build --release
@@ -135,7 +143,7 @@ cargo build --release
 cargo install --path ./cli --bin pqcanary
 ```
 
-### 2. Audit a Repository
+### 3. Audit a Repository
 
 ```bash
 # Run basic audit against local directory
@@ -249,7 +257,7 @@ Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for co
 
 ## Security
 
-For security advisories and responsible vulnerability disclosure, please refer to [SECURITY.md](SECURITY.md) or contact `security@pqcanary.io`.
+For security advisories and responsible vulnerability disclosure, please refer to [SECURITY.md](SECURITY.md) or contact [iqumnov@proton.me](mailto:iqumnov@proton.me).
 
 ---
 

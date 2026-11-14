@@ -18,6 +18,7 @@ docs/
 |   `-- quickstart.md                 # Initial scan, interpreting findings, and reports
 |-- architecture/
 |   |-- system-architecture.md        # Multi-engine pipeline and data flow
+|   |-- web-vs-native-limitations.md  # Web (WASM/Cloudflare) vs Native CLI boundary
 |   |-- pqmesh-protocol.md            # Distributed cross-medium synchronization bus
 |   `-- security-and-threat-model.md  # Air-gap guarantees and security controls
 |-- engines/
