@@ -1,0 +1,14 @@
+{
+  "name": "pqcanary-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PQCanary Monorepo Workspace",
+  "scripts": {
+    "build": "pnpm --filter pqcanary-web run build",
+    "dev": "pnpm --filter pqcanary-web run dev"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.4"
+}
