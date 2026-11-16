@@ -109,7 +109,7 @@ impl PqcAcmeEnrollmentEngine {
                privateKey:\n\
                  algorithm: {}\n\
                  size: 384\n",
-            acme_directory, domain, match c_type {
+            acme_directory, match c_type {
                 AcmeChallengeType::Dns01 => "dns01",
                 AcmeChallengeType::TlsAlpn01 => "tlsAlpn01",
                 AcmeChallengeType::Http01 => "http01",
