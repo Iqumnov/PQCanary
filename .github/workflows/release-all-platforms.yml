@@ -98,6 +98,8 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Build Native CLI & MCP (GNU & Musl Static)
+        env:
+          CC_x86_64_unknown_linux_musl: musl-gcc
         run: |
           cargo build --release --target x86_64-unknown-linux-gnu --bin pqcanary --bin pqcanary-mcp
           cargo build --release --target x86_64-unknown-linux-musl --bin pqcanary --bin pqcanary-mcp
