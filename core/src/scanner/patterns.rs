@@ -2589,14 +2589,9 @@ impl SuppressionEngine {
 
         // 2. Check preceding line for ignore directive placed above the target code:
         // e.g. `// pqcanary:ignore [RULE_ID]` or `// pqcanary:ignore-next-line [RULE_ID]`
-        if curr_idx > 0 && curr_idx - 1 < file_lines.len()
+        curr_idx > 0 && curr_idx - 1 < file_lines.len()
             && (Self::matches_ignore_directive(file_lines[curr_idx - 1], rule_id, category, false)
                 || Self::matches_ignore_directive(file_lines[curr_idx - 1], rule_id, category, true))
-            {
-                return true;
-            }
-
-        false
     }
 
     fn matches_ignore_directive(line: &str, rule_id: &str, category: &str, next_line_mode: bool) -> bool {

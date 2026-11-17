@@ -523,9 +523,8 @@ impl TensorAnalyzer {
         }
 
         let mut result = Tensor::new(new_shape.clone());
-        let output_size: usize = new_shape.iter().product::<usize>();
 
-        for flat_out in 0..output_size {
+        for (flat_out, item) in result.data.iter_mut().enumerate() {
             let mut out_coords = Vec::with_capacity(new_shape.len());
             let mut remainder = flat_out;
             for &dim in new_shape.iter().rev() {
@@ -544,7 +543,7 @@ impl TensorAnalyzer {
                 let mut idx_b = coords_b.to_vec(); idx_b.insert(axis_b, k);
                 sum = sum.add(a.get(&idx_a).mul(b.get(&idx_b)));
             }
-            result.data[flat_out] = sum;
+            *item = sum;
         }
         result
     }

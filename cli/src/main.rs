@@ -13,6 +13,7 @@
 //!   pqcanary worker --redis-url redis://127.0.0.1:6379
 
 #![forbid(unsafe_code)]
+#![allow(clippy::needless_bool, clippy::needless_range_loop)]
 
 use clap::{Parser, Subcommand};
 use indicatif::{ProgressBar, ProgressStyle};

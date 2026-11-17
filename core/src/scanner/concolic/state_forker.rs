@@ -159,10 +159,7 @@ impl StateForker {
             }
         }
         // Enforce worklist size cap (prevents memory explosion)
-        if self.worklist.len() >= self.max_worklist_size {
-            return true;
-        }
-        false
+        self.worklist.len() >= self.max_worklist_size
     }
 
     /// Fork the current state at a conditional branch.

@@ -624,9 +624,8 @@ impl AesDfaEngine {
             let col = fault.fault_column.min(3);
 
             // Intersect the new candidates with the existing candidates for this column's 4 bytes
-            for b in 0..4 {
+            for (b, new_cands) in result.candidates.iter().enumerate() {
                 let byte_idx = col * 4 + b;
-                let new_cands = &result.candidates[b];
                 global_candidates[byte_idx].retain(|k| new_cands.contains(k));
             }
         }

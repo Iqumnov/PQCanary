@@ -15,6 +15,7 @@
 //! All log/diagnostic output goes to stderr to avoid corrupting the JSON stream.
 
 #![forbid(unsafe_code)]
+#![allow(clippy::needless_bool, clippy::needless_range_loop)]
 #![recursion_limit = "512"]
 
 use serde::{Deserialize, Serialize};

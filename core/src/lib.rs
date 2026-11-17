@@ -4,6 +4,7 @@
 
 // Enforce strict memory safety paradigms
 #![forbid(unsafe_code)]
+#![allow(clippy::needless_bool, clippy::needless_range_loop)]
 
 pub mod scanner;
 pub mod refactor;
