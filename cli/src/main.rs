@@ -48,6 +48,7 @@ use pqcanary_core::scanner::autonomous_bot::{AutonomousBotEngine, GitWebhookPush
 use pqcanary_core::scanner::oscal_exporter::OscalExporter;
 use pqcanary_core::scanner::downgrade_sim::DowngradeSimulator;
 use pqcanary_core::scanner::acvp_kat::AcvpKatHarness;
+use pqcanary_core::scanner::acvp_validator::AcvpValidator;
 use pqcanary_core::scanner::composite_cert::CompositeCertValidator;
 use pqcanary_core::scanner::otel_exporter::OtelCryptoExporter;
 use pqcanary_core::scanner::constant_time::ConstantTimeVerifier;
@@ -623,6 +624,10 @@ enum Commands {
         /// Target algorithm filter: kem, dsa, slh, or all.
         #[arg(short, long)]
         algo: Option<String>,
+
+        /// Path to official NIST ACVP vector package JSON file to validate.
+        #[arg(short, long)]
+        vector_file: Option<String>,
 
         /// Output format: markdown (default) or json.
         #[arg(short, long, default_value = "markdown")]
@@ -2760,11 +2765,24 @@ async fn main() {
             }
         }
 
-        Commands::Acvp { library, algo, format } => {
-            let rep = AcvpKatHarness::verify_vectors(&library, algo.as_deref());
-            match format.to_lowercase().as_str() {
-                "json" => println!("{}", serde_json::to_string_pretty(&rep).unwrap_or_default()),
-                _ => println!("{}", AcvpKatHarness::format_markdown(&rep)),
+        Commands::Acvp { library, algo, vector_file, format } => {
+            if let Some(file_path) = vector_file {
+                match fs::read_to_string(&file_path) {
+                    Ok(content) => match AcvpValidator::validate_package(&content) {
+                        Ok(rep) => match format.to_lowercase().as_str() {
+                            "json" => println!("{}", serde_json::to_string_pretty(&rep).unwrap_or_default()),
+                            _ => println!("{}", AcvpValidator::format_markdown(&rep)),
+                        },
+                        Err(e) => eprintln!("Error validating ACVP vector package: {}", e),
+                    },
+                    Err(e) => eprintln!("Error reading vector file '{}': {}", file_path, e),
+                }
+            } else {
+                let rep = AcvpKatHarness::verify_vectors(&library, algo.as_deref());
+                match format.to_lowercase().as_str() {
+                    "json" => println!("{}", serde_json::to_string_pretty(&rep).unwrap_or_default()),
+                    _ => println!("{}", AcvpKatHarness::format_markdown(&rep)),
+                }
             }
         }
 

@@ -1,0 +1,30 @@
+# Smithery & Model Context Protocol Registry Manifest
+# https://smithery.ai / https://modelcontextprotocol.io
+name: pqcanary
+displayName: PQCanary Post-Quantum Security Scanner
+description: Universal enterprise post-quantum cryptographic security scanner, concolic SMT solver, and CycloneDX 1.6 CBOM generator adhering to NIST FIPS 203/204/205.
+version: 0.1.0
+author: Matvei Igumnov <iqumnov@proton.me>
+repository: https://github.com/Iqumnov/PQCanary
+license: Apache-2.0
+command: pqcanary-mcp
+args: []
+env:
+  RUST_LOG: "info"
+capabilities:
+  tools: true
+  resources: true
+  prompts: true
+categories:
+  - Security
+  - Developer Tools
+  - Cryptography
+tags:
+  - post-quantum
+  - nist-pqc
+  - fips-203
+  - fips-204
+  - cbom
+  - cyclonedx
+  - sigstore
+

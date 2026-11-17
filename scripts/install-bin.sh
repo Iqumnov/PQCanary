@@ -72,33 +72,41 @@ if [ "${PLATFORM}" = "linux" ]; then
     fi
 fi
 
-# 4. Construct Target Triple / Release Asset Name
+# 4. Construct Target Triple / Release Asset Name Candidates
+CANDIDATE_FILES=()
 if [ "${PLATFORM}" = "darwin" ]; then
     if [ "${ARCH}" = "aarch64" ]; then
-        ASSET_FILE="pqcanary-darwin-arm64.tar.gz"
+        CANDIDATE_FILES+=("pqcanary-darwin-arm64.tar.gz" "pqcanary-v0.1.0-aarch64-apple-darwin.tar.gz" "pqcanary-darwin-aarch64.tar.gz")
     else
-        ASSET_FILE="pqcanary-darwin-x86_64.tar.gz"
+        CANDIDATE_FILES+=("pqcanary-darwin-x86_64.tar.gz" "pqcanary-v0.1.0-x86_64-apple-darwin.tar.gz")
     fi
 elif [ "${PLATFORM}" = "windows" ]; then
-    ASSET_FILE="pqcanary-windows-x86_64.zip"
+    CANDIDATE_FILES+=("pqcanary-windows-x86_64.zip" "pqcanary-v0.1.0-x86_64-pc-windows-msvc.zip")
 else
     # Linux
     if [ "${ARCH}" = "x86_64" ]; then
         if [ -n "${LIBC_SUFFIX}" ]; then
-            ASSET_FILE="pqcanary-linux-x86_64-musl.tar.gz"
+            CANDIDATE_FILES+=("pqcanary-linux-x86_64-musl.tar.gz" "pqcanary-v0.1.0-x86_64-unknown-linux-musl.tar.gz" "pqcanary-linux-x86_64.tar.gz")
         else
-            ASSET_FILE="pqcanary-linux-x86_64.tar.gz"
+            CANDIDATE_FILES+=("pqcanary-linux-x86_64.tar.gz" "pqcanary-v0.1.0-x86_64-unknown-linux-gnu.tar.gz" "pqcanary-linux-x86_64-musl.tar.gz")
         fi
     else
-        ASSET_FILE="pqcanary-linux-aarch64.tar.gz"
+        CANDIDATE_FILES+=("pqcanary-linux-aarch64.tar.gz" "pqcanary-v0.1.0-aarch64-unknown-linux-musl.tar.gz")
     fi
 fi
+ASSET_FILE="${CANDIDATE_FILES[0]}"
 
 # 5. Resolve Version & Download URL
-info "Resolving latest release of PQCanary from ${GITHUB_REPO}..."
-
-DOWNLOAD_BASE_URL="https://github.com/${GITHUB_REPO}/releases/latest/download"
-FALLBACK_DIRECT_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/pqcanary-linux-x64-cli"
+VERSION="${PQCANARY_VERSION:-latest}"
+if [ "${VERSION}" = "latest" ]; then
+    info "Resolving latest release of PQCanary from ${GITHUB_REPO}..."
+    DOWNLOAD_BASE_URL="https://github.com/${GITHUB_REPO}/releases/latest/download"
+    FALLBACK_DIRECT_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/pqcanary-linux-x64-cli"
+else
+    info "Resolving release ${VERSION} of PQCanary from ${GITHUB_REPO}..."
+    DOWNLOAD_BASE_URL="https://github.com/${GITHUB_REPO}/releases/download/${VERSION}"
+    FALLBACK_DIRECT_URL="https://github.com/${GITHUB_REPO}/releases/download/${VERSION}/pqcanary-linux-x64-cli"
+fi
 
 TEMP_DIR="$(mktemp -d -t pqcanary-install.XXXXXX)"
 cleanup() {
@@ -121,9 +129,21 @@ download() {
     fi
 }
 
-info "Downloading ${ASSET_FILE}..."
-if ! download "${DOWNLOAD_BASE_URL}/${ASSET_FILE}" "${DOWNLOAD_FILE}" 2>/dev/null; then
-    warn "Primary archive ${ASSET_FILE} not found on release. Attempting fallback Linux CLI binary..."
+# Download Candidate Archive
+DOWNLOAD_SUCCESS=false
+for CANDIDATE in "${CANDIDATE_FILES[@]}"; do
+    CANDIDATE_PATH="${TEMP_DIR}/${CANDIDATE}"
+    info "Attempting download of ${CANDIDATE}..."
+    if download "${DOWNLOAD_BASE_URL}/${CANDIDATE}" "${CANDIDATE_PATH}" 2>/dev/null; then
+        DOWNLOAD_FILE="${CANDIDATE_PATH}"
+        ASSET_FILE="${CANDIDATE}"
+        DOWNLOAD_SUCCESS=true
+        break
+    fi
+done
+
+if [ "${DOWNLOAD_SUCCESS}" = false ]; then
+    warn "Primary archives not found on release. Attempting fallback Linux CLI binary..."
     if [ "${PLATFORM}" = "linux" ] && download "${FALLBACK_DIRECT_URL}" "${TEMP_DIR}/${BINARY_NAME}"; then
         chmod +x "${TEMP_DIR}/${BINARY_NAME}"
     else
@@ -133,7 +153,7 @@ fi
 
 # Unpack Archive if downloaded
 if [ -f "${DOWNLOAD_FILE}" ]; then
-    info "Extracting binary..."
+    info "Extracting binaries..."
     if [[ "${ASSET_FILE}" == *.tar.gz ]]; then
         tar -xzf "${DOWNLOAD_FILE}" -C "${TEMP_DIR}"
     elif [[ "${ASSET_FILE}" == *.zip ]]; then
@@ -141,52 +161,91 @@ if [ -f "${DOWNLOAD_FILE}" ]; then
     fi
 fi
 
-# Locate the binary inside temporary directory
-EXTRACTED_BIN="$(find "${TEMP_DIR}" -type f -name "${BINARY_NAME}" -o -name "${BINARY_NAME}.exe" | head -n 1)"
+# Locate the primary binary inside temporary directory
+EXTRACTED_BIN="$(find "${TEMP_DIR}" -type f \( -name "${BINARY_NAME}" -o -name "${BINARY_NAME}.exe" \) 2>/dev/null | head -n 1 || true)"
 if [ -z "${EXTRACTED_BIN}" ] || [ ! -f "${EXTRACTED_BIN}" ]; then
     error "Could not find '${BINARY_NAME}' binary in downloaded archive."
 fi
 
 # 6. Determine Install Destination
-INSTALL_DIR="/usr/local/bin"
 USE_SUDO=false
 
-if [ -w "${INSTALL_DIR}" ]; then
-    TARGET_PATH="${INSTALL_DIR}/${BINARY_NAME}"
-elif [ "$(id -u)" -eq 0 ]; then
+if [ -n "${PQCANARY_INSTALL_DIR:-}" ]; then
+    INSTALL_DIR="${PQCANARY_INSTALL_DIR}"
     mkdir -p "${INSTALL_DIR}"
-    TARGET_PATH="${INSTALL_DIR}/${BINARY_NAME}"
+elif [ "${PQCANARY_NO_SUDO:-0}" = "1" ]; then
+    INSTALL_DIR="${HOME}/.local/bin"
+    mkdir -p "${INSTALL_DIR}"
+elif [ -w "/usr/local/bin" ]; then
+    INSTALL_DIR="/usr/local/bin"
+elif [ "$(id -u)" -eq 0 ]; then
+    INSTALL_DIR="/usr/local/bin"
+    mkdir -p "${INSTALL_DIR}"
 elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+    INSTALL_DIR="/usr/local/bin"
     USE_SUDO=true
-    TARGET_PATH="${INSTALL_DIR}/${BINARY_NAME}"
 else
     # Fallback to user home directory
     INSTALL_DIR="${HOME}/.local/bin"
     mkdir -p "${INSTALL_DIR}"
-    TARGET_PATH="${INSTALL_DIR}/${BINARY_NAME}"
 fi
 
+TARGET_PATH="${INSTALL_DIR}/${BINARY_NAME}"
 info "Installing ${BINARY_NAME} to ${TARGET_PATH}..."
 if [ "${USE_SUDO}" = true ]; then
     sudo mkdir -p "${INSTALL_DIR}"
     sudo install -m 755 "${EXTRACTED_BIN}" "${TARGET_PATH}"
 else
+    mkdir -p "${INSTALL_DIR}"
     install -m 755 "${EXTRACTED_BIN}" "${TARGET_PATH}"
 fi
 
-# 7. Verification & Path Advice
-if command -v "${BINARY_NAME}" >/dev/null 2>&1; then
-    INSTALLED_VER="$("${BINARY_NAME}" --version 2>/dev/null || echo "0.1.0")"
-    success "PQCanary installed successfully: ${INSTALLED_VER}"
-else
-    success "PQCanary binary installed at ${TARGET_PATH}"
-    warn "${INSTALL_DIR} is not currently in your system PATH."
-    printf "\nAdd the following line to your shell profile (~/.bashrc, ~/.zshrc, etc.):\n"
-    printf "  export PATH=\"%s:\$PATH\"\n\n" "${INSTALL_DIR}"
+# Locate and install companion MCP server if present in archive
+EXTRACTED_MCP="$(find "${TEMP_DIR}" -type f \( -name "pqcanary-mcp" -o -name "pqcanary-mcp.exe" \) 2>/dev/null | head -n 1 || true)"
+if [ -n "${EXTRACTED_MCP}" ] && [ -f "${EXTRACTED_MCP}" ]; then
+    MCP_TARGET_PATH="${INSTALL_DIR}/pqcanary-mcp"
+    info "Installing Model Context Protocol daemon to ${MCP_TARGET_PATH}..."
+    if [ "${USE_SUDO}" = true ]; then
+        sudo install -m 755 "${EXTRACTED_MCP}" "${MCP_TARGET_PATH}"
+    else
+        install -m 755 "${EXTRACTED_MCP}" "${MCP_TARGET_PATH}"
+    fi
+    success "Installed Model Context Protocol daemon: ${MCP_TARGET_PATH}"
 fi
 
-printf "\n%sGet started with:%s\n" "${BOLD}" "${RESET}"
-printf "  pqcanary scan .\n"
-printf "  pqcanary probe cloudflare.com:443\n"
-printf "  pqcanary --help\n\n"
+# 7. Verification & Path Advice
+if ! echo ":${PATH}:" | grep -q ":${INSTALL_DIR}:"; then
+    warn "${INSTALL_DIR} is not currently in your system PATH."
+    CURRENT_SHELL="$(basename "${SHELL:-bash}")"
+    case "${CURRENT_SHELL}" in
+        zsh)  PROFILE_FILE="${HOME}/.zshrc" ;;
+        fish) PROFILE_FILE="${HOME}/.config/fish/config.fish" ;;
+        *)    PROFILE_FILE="${HOME}/.bashrc" ;;
+    esac
+    printf "\nAdd the following line to your %s:\n" "${PROFILE_FILE}"
+    if [ "${CURRENT_SHELL}" = "fish" ]; then
+        printf "  fish_add_path %s\n\n" "${INSTALL_DIR}"
+    else
+        printf "  export PATH=\"%s:\$PATH\"\n\n" "${INSTALL_DIR}"
+    fi
+fi
+
+if command -v "${BINARY_NAME}" >/dev/null 2>&1; then
+    INSTALLED_VER="$("${BINARY_NAME}" --version 2>/dev/null || echo "v0.1.0")"
+    success "PQCanary core CLI installed successfully: ${INSTALLED_VER}"
+else
+    success "PQCanary binary installed at ${TARGET_PATH}"
+fi
+
+if command -v "pqcanary-mcp" >/dev/null 2>&1 || [ -f "${INSTALL_DIR}/pqcanary-mcp" ]; then
+    success "PQCanary MCP server installed (ready for Claude Desktop & Cursor)"
+fi
+
+printf "\n%sQuick Start Commands:%s\n" "${BOLD}" "${RESET}"
+printf "  pqcanary scan .                    # Audit current repository\n"
+printf "  pqcanary cbom . -o cbom.json       # Generate CycloneDX 1.6 CBOM\n"
+printf "  pqcanary probe-tls target:443      # Probe live endpoint for ML-KEM\n"
+printf "  pqcanary serve --port 8080         # Launch background REST daemon\n"
+printf "  pqcanary-mcp                       # Launch MCP server for AI IDEs\n"
+printf "  pqcanary --help                    # Explore all 42 security tools\n\n"
 

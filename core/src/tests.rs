@@ -3892,3 +3892,17 @@ fn test_runtime_process_auditor() {
     assert!(reference.iter().any(|p| p.runtime_posture == "CLASSICAL_VULNERABLE"));
 }
 
+#[test]
+fn test_acvp_validator() {
+    use crate::scanner::acvp_validator::AcvpValidator;
+
+    let sample_json = AcvpValidator::sample_acvp_vector();
+    let report = AcvpValidator::validate_package(&sample_json).expect("Validation should succeed on sample vector");
+
+    assert_eq!(report.total_vectors_evaluated, 1);
+    assert_eq!(report.total_vectors_passed, 1);
+    assert_eq!(report.total_vectors_failed, 0);
+    assert!(report.compliant);
+    assert!(report.tested_algorithms.contains(&"ML-KEM-768".to_string()));
+}
+

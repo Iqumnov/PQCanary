@@ -43,6 +43,7 @@ pub mod autonomous_bot;
 pub mod oscal_exporter;
 pub mod downgrade_sim;
 pub mod acvp_kat;
+pub mod acvp_validator;
 pub mod composite_cert;
 pub mod otel_exporter;
 pub mod constant_time;

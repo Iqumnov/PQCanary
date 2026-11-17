@@ -1,0 +1,16 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/server.json",
+  "name": "pqcanary",
+  "version": "0.1.0",
+  "description": "Universal enterprise post-quantum cryptographic security scanner and CBOM generator",
+  "author": "Matvei Igumnov <iqumnov@proton.me>",
+  "homepage": "https://pqcanary.pages.dev",
+  "repository": "https://github.com/Iqumnov/PQCanary",
+  "executable": {
+    "command": "pqcanary-mcp",
+    "args": []
+  },
+  "tools": 42,
+  "protocolVersion": "2024-11-05"
+}
+

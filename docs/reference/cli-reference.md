@@ -438,12 +438,13 @@ pqcanary downgrade <TARGET:PORT> [--strict-cnsa] [-f <FORMAT>] [-o <FILE>]
 NIST CAVP / ACVP Known-Answer-Test (KAT) conformance testing harness for FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA). Evaluates NTT polynomial reductions, Montgomery constants, and rejection sampling bounds.
 
 ```bash
-pqcanary acvp [--library <NAME>] [--algorithm <ALG>] [-f <FORMAT>] [-o <FILE>]
+pqcanary acvp [--library <NAME>] [--algorithm <ALG>] [--vector-file <PATH>] [-f <FORMAT>] [-o <FILE>]
 ```
 
 **Options:**
 - `--library <NAME>`: Target cryptographic implementation library identifier (default: `liboqs-sys / RustCrypto-PQC`).
 - `--algorithm <ALG>`: Target algorithm (`ml-kem-768`, `ml-dsa-65`, `slh-dsa-128s`, or `all`).
+- `--vector-file <PATH>`: Path to official NIST ACVP vector package JSON file to validate against FIPS 203/204/205 schemas and KAT lengths.
 - `-f, --format <FORMAT>`: Output format (`markdown`, `json`, or `text`).
 - `-o, --output <FILE>`: Destination output file path.
 

@@ -1,5 +1,5 @@
 import { Title, Meta, Link } from "@solidjs/meta";
-import { createSignal, createEffect, For, Show, onMount, onCleanup } from "solid-js";
+import { createSignal, createEffect, For, Show, onMount, onCleanup, lazy, Suspense } from "solid-js";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import {
@@ -139,7 +139,7 @@ import {
   isReportContent,
   type ImportedReportBundle
 } from "../lib/reportImporter";
-import { LandingPage } from "../lib/LandingPage";
+const LandingPage = lazy(() => import("../lib/LandingPage").then(m => ({ default: m.LandingPage })));
 
 // Single Unified Smooth Toggle Switch Component (SolidJS fine-grained reactive component with zero reflow & GPU-accelerated spring ease)
 function ToggleSwitch(props: {
@@ -1569,6 +1569,11 @@ export default function Home() {
       mainLenis.on("scroll", () => {
         updateMetrics();
       });
+
+      // Register PWA Service Worker for offline / air-gapped cryptographic execution
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
 
       // Hydrate state from localStorage
       try {
@@ -3838,23 +3843,32 @@ export default function Home() {
 
       {/* Canonical Link & Favicons */}
       <Link rel="canonical" href="https://pqcanary.pages.dev/" />
+      <Link rel="manifest" href="/manifest.json" />
       <Link rel="icon" type="image/svg+xml" href={isDarkMode() ? "/PQCanary-dark.svg" : "/PQCanary.svg"} />
       <Link rel="alternate icon" href="/favicon.ico" />
 
-      {/* Open Graph Protocol */}
+      {/* Open Graph Protocol (1200x630 Optimized Social Preview) */}
       <Meta property="og:type" content="website" />
       <Meta property="og:site_name" content="PQCanary" />
-      <Meta property="og:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Scanner" />
-      <Meta property="og:description" content="Audit source code, repositories, and endpoints for quantum-vulnerable cryptography and generate NIST FIPS 203/204 remediation patches." />
+      <Meta property="og:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Security & Audit Platform" />
+      <Meta property="og:description" content="Automated discovery, concolic SMT verification, and CycloneDX 1.6 CBOM generation. Defend your codebase against Harvest Now, Decrypt Later quantum threats." />
       <Meta property="og:url" content="https://pqcanary.pages.dev/" />
-      <Meta property="og:image" content="/icons/icon-512.png" />
+      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image:secure_url" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image:type" content="image/png" />
+      <Meta property="og:image:width" content="1200" />
+      <Meta property="og:image:height" content="630" />
+      <Meta property="og:image:alt" content="PQCanary Enterprise Post-Quantum Cryptographic Security Platform" />
       <Meta property="og:locale" content="en_US" />
 
       {/* Twitter Cards */}
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Scanner" />
-      <Meta name="twitter:description" content="Enterprise post-quantum cryptographic scanner, CBOM generator, and automated remediation engine." />
-      <Meta name="twitter:image" content="/icons/icon-512.png" />
+      <Meta name="twitter:site" content="@PQCanary" />
+      <Meta name="twitter:creator" content="@Iqumnov" />
+      <Meta name="twitter:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Security & Audit Platform" />
+      <Meta name="twitter:description" content="Automated discovery, concolic SMT verification, and CycloneDX 1.6 CBOM generation. Defend your codebase against Harvest Now, Decrypt Later quantum threats." />
+      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta name="twitter:image:alt" content="PQCanary Enterprise Post-Quantum Cryptographic Security Platform" />
 
       {/* Schema.org Structured Data (JSON-LD) */}
       <script type="application/ld+json">
@@ -4776,14 +4790,16 @@ export default function Home() {
                 "will-change": "opacity, transform, filter"
               }}
             >
-              <LandingPage
-                isDarkMode={isDarkMode()}
-                onLaunchApp={launchScannerApp}
-                themeCloudyGlassStyle={themeCloudyGlassStyle}
-                themeTextColor={themeTextColor}
-                themeSubTextColor={themeSubTextColor}
-                themeSidebarCardStyle={themeSidebarCardStyle}
-              />
+              <Suspense fallback={<div style={{ "min-height": "400px" }} />}>
+                <LandingPage
+                  isDarkMode={isDarkMode()}
+                  onLaunchApp={launchScannerApp}
+                  themeCloudyGlassStyle={themeCloudyGlassStyle}
+                  themeTextColor={themeTextColor}
+                  themeSubTextColor={themeSubTextColor}
+                  themeSidebarCardStyle={themeSidebarCardStyle}
+                />
+              </Suspense>
             </div>
 
             {/* Main Scanner Application View */}
