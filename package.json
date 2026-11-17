@@ -5,6 +5,7 @@
   "description": "PQCanary Monorepo Workspace",
   "scripts": {
     "build": "pnpm --filter pqcanary-web run build",
+    "deploy": "cd web && npx wrangler --cwd .output deploy",
     "dev": "pnpm --filter pqcanary-web run dev"
   },
   "engines": {
@@ -12,3 +13,4 @@
   },
   "packageManager": "pnpm@9.15.4"
 }
+
