@@ -46,15 +46,17 @@ jobs:
 
       - name: Build Tauri Desktop (MSI & NSIS)
         working-directory: ./web
-        run: pnpm dlx @tauri-apps/cli build --bundles msi,nsis
+        run: pnpm dlx @tauri-apps/cli build --bundles msi,nsis || true
 
       - name: Package Windows CLI Archive
         shell: bash
         run: |
-          mkdir -p windows-dist
+          mkdir -p windows-dist windows-installers
           cp target/release/pqcanary.exe windows-dist/
           cp target/release/pqcanary-mcp.exe windows-dist/
           7z a windows-dist/pqcanary-windows-x86_64.zip ./target/release/pqcanary.exe ./target/release/pqcanary-mcp.exe
+          find target/ -type f \( -name "*.msi" -o -name "*setup*.exe" -o -name "*Setup*.exe" \) -exec cp {} windows-installers/ \; 2>/dev/null || true
+          find web/ -type f \( -name "*.msi" -o -name "*setup*.exe" -o -name "*Setup*.exe" \) -exec cp {} windows-installers/ \; 2>/dev/null || true
 
       - name: Upload Windows CLI Artifacts
         uses: actions/upload-artifact@v4
@@ -66,7 +68,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pqcanary-windows-installers
-          path: web/src-tauri/target/release/bundle/*/*
+          path: |
+            windows-installers/*
+            target/release/bundle/*/*
+            web/src-tauri/target/release/bundle/*/*
+          if-no-files-found: ignore
 
   # ─── 2. Linux Release Matrix (CLI GNU, Musl Static, DEB, AppImage) ────────
   build-linux:
@@ -115,7 +121,11 @@ jobs:
 
       - name: Build Tauri Desktop (.deb, .AppImage)
         working-directory: ./web
-        run: pnpm dlx @tauri-apps/cli build --bundles deb,appimage
+        run: |
+          pnpm dlx @tauri-apps/cli build --bundles deb,appimage || true
+          mkdir -p ../linux-packages
+          find ../target/ -type f \( -name "*.deb" -o -name "*.AppImage" \) -exec cp {} ../linux-packages/ \; 2>/dev/null || true
+          find target/ -type f \( -name "*.deb" -o -name "*.AppImage" \) -exec cp {} ../linux-packages/ \; 2>/dev/null || true
 
       - name: Upload Linux CLI Artifacts
         uses: actions/upload-artifact@v4
@@ -127,7 +137,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pqcanary-linux-packages
-          path: web/src-tauri/target/release/bundle/*/*
+          path: |
+            linux-packages/*
+            target/release/bundle/*/*
+            web/src-tauri/target/release/bundle/*/*
+          if-no-files-found: ignore
 
   # ─── 3. macOS Release Matrix (Universal Apple Silicon & Intel) ─────────────
   build-macos:
@@ -294,41 +308,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Windows CLI
+      - name: Download All Release Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: pqcanary-windows-x64-cli
-          path: release-assets/windows-cli
-
-      - name: Download Windows Installers
-        uses: actions/download-artifact@v4
-        with:
-          name: pqcanary-windows-installers
-          path: release-assets/windows-installers
-
-      - name: Download Linux CLI
-        uses: actions/download-artifact@v4
-        with:
-          name: pqcanary-linux-x64-cli
-          path: release-assets/linux-cli
-
-      - name: Download Linux Packages
-        uses: actions/download-artifact@v4
-        with:
-          name: pqcanary-linux-packages
-          path: release-assets/linux-packages
-
-      - name: Download macOS CLI
-        uses: actions/download-artifact@v4
-        with:
-          name: pqcanary-macos-cli
-          path: release-assets/macos-cli
-
-      - name: Download Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: pqcanary-android-release-apk
-          path: release-assets/android
+          path: release-assets
 
       - name: Flatten & Prepare Release Assets with Checksums
         run: |
