@@ -60,7 +60,7 @@ export function LandingPage(props: LandingPageProps) {
       {
         id: "installation",
         title: "Installation, Binaries & Installers",
-        badge: "v1.0.0",
+        badge: "v0.1.0",
         summary: "Pre-compiled desktop installers (MSI, EXE, DEB, AppImage, APK), Cargo package manager, and container deployments.",
         content: [
           {
