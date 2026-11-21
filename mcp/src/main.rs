@@ -1889,7 +1889,7 @@ async fn dispatch_tool(name: &str, args: &Value) -> Value {
         "attest_cbom_provenance" => {
             let cbom = args.get("cbom_json").and_then(Value::as_str).unwrap_or(r#"{"bomFormat":"CycloneDX","specVersion":"1.6"}"#);
             let project = args.get("project_name").and_then(Value::as_str).unwrap_or("production-workload");
-            let signer = args.get("signer_identity").and_then(Value::as_str).unwrap_or("iqumnov@proton.me");
+            let signer = args.get("signer_identity").and_then(Value::as_str).unwrap_or("matvei@iqumnov.com");
             let env = pqcanary_core::scanner::cbom_attest::CbomAttestor::attest_cbom(cbom, project, signer);
             json!({
                 "attestation_envelope": env,

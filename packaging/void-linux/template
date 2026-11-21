@@ -8,9 +8,9 @@ build_style=cargo
 hostmakedepends="cargo pkg-config"
 makedepends=""
 short_desc="Universal Post-Quantum Cryptographic Security Scanner & CBOM Generator"
-maintainer="Matvei Igumnov <iqumnov@proton.me>"
+maintainer="Matvei Igumnov <matvei@iqumnov.com>"
 license="Apache-2.0"
-homepage="https://pqcanary.pages.dev"
+homepage="https://pqcanary.iqumnov.com"
 distfiles="https://github.com/Iqumnov/PQCanary/archive/refs/tags/v${version}.tar.gz"
 checksum="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 

@@ -7,10 +7,10 @@ export default function Fips203Doc() {
       <Meta name="description" content="Technical audit guide for NIST FIPS 203 (Module-Lattice Key Encapsulation Mechanism / Kyber). Audit security categories, detect KyberSlash timing defects, and generate hybrid migration patches." />
       <Meta property="og:title" content="NIST FIPS 203 (ML-KEM) Post-Quantum Cryptography Audit | PQCanary" />
       <Meta property="og:description" content="Technical audit guide for NIST FIPS 203 (ML-KEM). Audit security categories, detect KyberSlash timing defects, and generate hybrid migration patches." />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Link rel="canonical" href="https://pqcanary.pages.dev/docs/fips-203" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/docs/fips-203" />
 
       <nav style={{ "margin-bottom": "2rem" }}>
         <a href="/docs" style={{ color: "#F59E0B", "text-decoration": "none", "font-size": "0.95rem", "font-weight": "500" }}>

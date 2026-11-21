@@ -7,10 +7,10 @@ export default function CbomAttestationDoc() {
       <Meta name="description" content="Generate and cryptographically attest CycloneDX 1.6 Cryptographic Bills of Materials (CBOM) using in-toto SLSA Provenance v1.0 and Sigstore Cosign DSSE envelopes." />
       <Meta property="og:title" content="CycloneDX 1.6 CBOM &amp; Sigstore Cosign Attestation | PQCanary" />
       <Meta property="og:description" content="Generate and cryptographically attest CycloneDX 1.6 Cryptographic Bills of Materials (CBOM) using in-toto SLSA Provenance v1.0 and Sigstore Cosign DSSE envelopes." />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Link rel="canonical" href="https://pqcanary.pages.dev/docs/cbom-attestation" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/docs/cbom-attestation" />
 
       <nav style={{ "margin-bottom": "2rem" }}>
         <a href="/docs" style={{ color: "#F59E0B", "text-decoration": "none", "font-size": "0.95rem", "font-weight": "500" }}>

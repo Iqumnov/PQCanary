@@ -151,7 +151,7 @@
   <!-- Footer Platform & Author Line -->
   <g transform="translate(360, 565)" font-family="system-ui, -apple-system, sans-serif" font-size="13.5" fill="#78716C">
     <text x="0" y="0">
-      pqcanary.pages.dev • Standalone musl/glibc binaries for Linux, macOS, Windows
+      pqcanary.iqumnov.com • Standalone musl/glibc binaries for Linux, macOS, Windows
     </text>
     <text x="760" y="0" text-anchor="end">
       By Matvei Igumnov • github.com/Iqumnov/PQCanary

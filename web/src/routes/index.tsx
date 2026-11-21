@@ -2847,7 +2847,7 @@ export default function Home() {
     );
 
     tasks.push(
-      Promise.resolve(attestCbomProvenanceClient(cbomJson() || "{\"bomFormat\":\"CycloneDX\",\"specVersion\":\"1.6\",\"components\":[]}", target.slice(0, 30) || "production-cbom", "iqumnov@proton.me"))
+      Promise.resolve(attestCbomProvenanceClient(cbomJson() || "{\"bomFormat\":\"CycloneDX\",\"specVersion\":\"1.6\",\"components\":[]}", target.slice(0, 30) || "production-cbom", "matvei@iqumnov.com"))
         .then((res) => setCbomAttestEnvelope(res))
         .catch(() => { })
     );
@@ -3842,7 +3842,7 @@ export default function Home() {
       <Meta name="theme-color" content={isDarkMode() ? "#000000" : "#FFFFFF"} />
 
       {/* Canonical Link & Favicons */}
-      <Link rel="canonical" href="https://pqcanary.pages.dev/" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/" />
       <Link rel="manifest" href="/manifest.json" />
       <Link rel="icon" type="image/svg+xml" href={isDarkMode() ? "/PQCanary-dark.svg" : "/PQCanary.svg"} />
       <Link rel="alternate icon" href="/favicon.ico" />
@@ -3852,9 +3852,9 @@ export default function Home() {
       <Meta property="og:site_name" content="PQCanary" />
       <Meta property="og:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Security & Audit Platform" />
       <Meta property="og:description" content="Automated discovery, concolic SMT verification, and CycloneDX 1.6 CBOM generation. Defend your codebase against Harvest Now, Decrypt Later quantum threats." />
-      <Meta property="og:url" content="https://pqcanary.pages.dev/" />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Meta property="og:image:secure_url" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:url" content="https://pqcanary.iqumnov.com/" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Meta property="og:image:secure_url" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta property="og:image:type" content="image/png" />
       <Meta property="og:image:width" content="1200" />
       <Meta property="og:image:height" content="630" />
@@ -3867,7 +3867,7 @@ export default function Home() {
       <Meta name="twitter:creator" content="@Iqumnov" />
       <Meta name="twitter:title" content="PQCanary | Enterprise Post-Quantum Cryptographic Security & Audit Platform" />
       <Meta name="twitter:description" content="Automated discovery, concolic SMT verification, and CycloneDX 1.6 CBOM generation. Defend your codebase against Harvest Now, Decrypt Later quantum threats." />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:image:alt" content="PQCanary Enterprise Post-Quantum Cryptographic Security Platform" />
 
       {/* Schema.org Structured Data (JSON-LD) */}

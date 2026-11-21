@@ -1,6 +1,6 @@
 class Pqcanary < Formula
   desc "Universal Post-Quantum Cryptographic Security Scanner & CBOM Generator"
-  homepage "https://pqcanary.pages.dev"
+  homepage "https://pqcanary.iqumnov.com"
   version "0.1.0"
   license "Apache-2.0"
 

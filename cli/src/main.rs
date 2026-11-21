@@ -79,7 +79,7 @@ use pqcanary_core::scanner::kmip_wire_protocol::KmipWireProtocol;
                   concolic symbolic execution with Z3, Lean 4 formal proofs, Landauer thermodynamic modeling,\n\
                   QPU circuit simulation, and automated remediation patches.",
     version = "0.1.0",
-    author = "Matvei Igumnov <iqumnov@proton.me>",
+    author = "Matvei Igumnov <matvei@iqumnov.com>",
 )]
 struct Cli {
     #[command(subcommand)]
@@ -693,7 +693,7 @@ enum Commands {
         project: String,
 
         /// Signer OIDC identity email.
-        #[arg(short, long, default_value = "iqumnov@proton.me")]
+        #[arg(short, long, default_value = "matvei@iqumnov.com")]
         signer: String,
 
         /// Output DSSE envelope file path.

@@ -82,7 +82,7 @@ impl PqcAcmeEnrollmentEngine {
              spec:\n\
                acme:\n\
                  server: {}\n\
-                 email: iqumnov@proton.me\n\
+                 email: matvei@iqumnov.com\n\
                  privateKeySecretRef:\n\
                    name: pqc-acme-account-key\n\
                  solvers:\n\

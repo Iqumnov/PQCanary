@@ -1879,7 +1879,7 @@ impl ApiDaemon {
     /// Environment variables:
     ///   PQCANARY_API_TOKEN      — Bearer token for authentication (optional)
     ///   PQCANARY_ALLOWED_ORIGINS — Comma-separated list of allowed CORS origins
-    ///                             e.g. "https://pqcanary.pages.dev,http://localhost:3000"
+    ///                             e.g. "https://pqcanary.iqumnov.com,http://localhost:3000"
     ///                             If unset, defaults to allowing localhost:3000 only.
     pub async fn start_server() -> Result<(), std::io::Error> {
         Self::start_server_on_port(8080).await

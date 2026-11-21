@@ -22,7 +22,7 @@ The PQCanary project practices coordinated vulnerability disclosure. If you disc
 Please report vulnerabilities via email:
 
 - **Security Contact**: Matvei Igumnov
-- **Email**: `iqumnov@proton.me`
+- **Email**: `matvei@iqumnov.com`
 
 ### Information to Include
 To help us triage and remediate the issue rapidly, please provide:

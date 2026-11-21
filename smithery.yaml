@@ -4,7 +4,7 @@ name: pqcanary
 displayName: PQCanary Post-Quantum Security Scanner
 description: Universal enterprise post-quantum cryptographic security scanner, concolic SMT solver, and CycloneDX 1.6 CBOM generator adhering to NIST FIPS 203/204/205.
 version: 0.1.0
-author: Matvei Igumnov <iqumnov@proton.me>
+author: Matvei Igumnov <matvei@iqumnov.com>
 repository: https://github.com/Iqumnov/PQCanary
 license: Apache-2.0
 command: pqcanary-mcp

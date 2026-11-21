@@ -257,7 +257,7 @@ Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for co
 
 ## Security
 
-For security advisories and responsible vulnerability disclosure, please refer to [SECURITY.md](SECURITY.md) or contact [iqumnov@proton.me](mailto:iqumnov@proton.me).
+For security advisories and responsible vulnerability disclosure, please refer to [SECURITY.md](SECURITY.md) or contact [matvei@iqumnov.com](mailto:matvei@iqumnov.com).
 
 ---
 

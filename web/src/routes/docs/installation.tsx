@@ -7,10 +7,10 @@ export default function InstallationDoc() {
       <Meta name="description" content="Install PQCanary across Linux (glibc & Void/Alpine musl), macOS, Windows, Cargo, and Docker. Zero external dependencies required." />
       <Meta property="og:title" content="Installation &amp; Standalone Binaries | PQCanary Documentation" />
       <Meta property="og:description" content="Install PQCanary across Linux (glibc & Void/Alpine musl), macOS, Windows, Cargo, and Docker. Zero external dependencies required." />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Link rel="canonical" href="https://pqcanary.pages.dev/docs/installation" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/docs/installation" />
 
       <nav style={{ "margin-bottom": "2rem" }}>
         <a href="/docs" style={{ color: "#F59E0B", "text-decoration": "none", "font-size": "0.95rem", "font-weight": "500" }}>

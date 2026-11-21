@@ -4,7 +4,7 @@
 Formal specification and proof of correctness for NIST FIPS 203 (ML-KEM) Key Encapsulation
 soundness using Homotopy Type Theory (HoTT) propositional identity types.
 
-Author: Matvei Igumnov <iqumnov@proton.me>
+Author: Matvei Igumnov <matvei@iqumnov.com>
 -/
 
 namespace PQCanary.HoTT

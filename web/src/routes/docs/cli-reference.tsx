@@ -7,10 +7,10 @@ export default function CliReferenceDoc() {
       <Meta name="description" content="Complete command-line interface (CLI) manual for PQCanary: subcommands, flags, options, exit codes, and environment variables." />
       <Meta property="og:title" content="CLI Command Reference Manual | PQCanary Documentation" />
       <Meta property="og:description" content="Complete command-line interface (CLI) manual for PQCanary: subcommands, flags, options, exit codes, and environment variables." />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Link rel="canonical" href="https://pqcanary.pages.dev/docs/cli-reference" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/docs/cli-reference" />
 
       <nav style={{ "margin-bottom": "2rem" }}>
         <a href="/docs" style={{ color: "#F59E0B", "text-decoration": "none", "font-size": "0.95rem", "font-weight": "500" }}>

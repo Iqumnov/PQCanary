@@ -1,10 +1,10 @@
-# Maintainer: Matvei Igumnov <iqumnov@proton.me>
+# Maintainer: Matvei Igumnov <matvei@iqumnov.com>
 pkgname=pqcanary-bin
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="Universal Post-Quantum Cryptographic Security Scanner & CBOM Generator (NIST FIPS 203/204)"
 arch=('x86_64' 'aarch64')
-url="https://pqcanary.pages.dev"
+url="https://pqcanary.iqumnov.com"
 license=('Apache-2.0')
 provides=('pqcanary' 'pqcanary-mcp')
 conflicts=('pqcanary')

@@ -7,10 +7,10 @@ export default function DocsIndex() {
       <Meta name="description" content="Official documentation for PQCanary: NIST FIPS 203/204 cryptographic scanning, universal binary installation, CBOM generation, and concolic SMT verification." />
       <Meta property="og:title" content="PQCanary Documentation & Architectural Manual" />
       <Meta property="og:description" content="Official documentation for PQCanary: NIST FIPS 203/204 cryptographic scanning, universal binary installation, CBOM generation, and concolic SMT verification." />
-      <Meta property="og:image" content="https://pqcanary.pages.dev/og-banner.png" />
+      <Meta property="og:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:image" content="https://pqcanary.pages.dev/og-banner.png" />
-      <Link rel="canonical" href="https://pqcanary.pages.dev/docs" />
+      <Meta name="twitter:image" content="https://pqcanary.iqumnov.com/og-banner.png" />
+      <Link rel="canonical" href="https://pqcanary.iqumnov.com/docs" />
 
       <nav style={{ "margin-bottom": "2rem" }}>
         <a href="/" style={{ color: "#F59E0B", "text-decoration": "none", "font-size": "0.95rem", "font-weight": "500" }}>

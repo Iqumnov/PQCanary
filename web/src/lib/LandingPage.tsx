@@ -665,7 +665,7 @@ pqcanary constant-time --routine mlkem768_decaps_inner --samples 50000`
             codeSnippet: {
               lang: "bash",
               code: `# Attest CBOM with in-toto SLSA Provenance v1.0 and Sigstore Cosign
-pqcanary cbom-attest ./cbom.json --project enterprise-core --signer iqumnov@proton.me`
+pqcanary cbom-attest ./cbom.json --project enterprise-core --signer matvei@iqumnov.com`
             }
           }
         ]
