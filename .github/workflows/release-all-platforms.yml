@@ -252,11 +252,21 @@ jobs:
         working-directory: ./web
         run: pnpm run build
 
+      - name: Package Web Distribution Archive
+        shell: bash
+        run: |
+          mkdir -p web-dist
+          if [ -d "web/.output/public" ]; then
+            tar -czvf web-dist/pqcanary-web-static.tar.gz -C web/.output/public .
+          elif [ -d "web/dist" ]; then
+            tar -czvf web-dist/pqcanary-web-static.tar.gz -C web/dist .
+          fi
+
       - name: Upload Web Assets Bundle
         uses: actions/upload-artifact@v4
         with:
           name: pqcanary-web-dist
-          path: web/.output/public/
+          path: web-dist/*
 
   # ─── 5. Multi-Platform Docker Container & GHCR Push ────────────────────────
   build-docker:
@@ -314,12 +324,19 @@ jobs:
           path: release-assets
 
       - name: Flatten & Prepare Release Assets with Checksums
+        shell: bash
         run: |
           mkdir -p dist
-          find release-assets/ -type f -exec cp {} dist/ \;
+          # If web dist was downloaded as a raw directory, bundle it cleanly
+          if [ -d release-assets/pqcanary-web-dist ] && [ ! -f release-assets/pqcanary-web-dist/*.tar.gz ]; then
+            tar -czvf dist/pqcanary-web-static.tar.gz -C release-assets/pqcanary-web-dist . 2>/dev/null || true
+          fi
+          # Copy only distribution packages, archives, installers, and standalone binaries
+          find release-assets/ -type f \( -name "*.tar.gz" -o -name "*.zip" -o -name "*.deb" -o -name "*.AppImage" -o -name "*.msi" -o -name "*.apk" -o -name "*setup*.exe" -o -name "*Setup*.exe" \) -exec cp {} dist/ \;
           cd dist
           sha256sum * > SHA256SUMS.txt 2>/dev/null || true
-          ls -la
+          echo "=== Prepared Release Assets ($(ls -1 | wc -l) files) ==="
+          ls -lh
 
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
