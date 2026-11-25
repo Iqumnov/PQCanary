@@ -4,6 +4,7 @@ Enterprise Post-Quantum Cryptographic Security, Formal Verification, and Audit P
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24527917.svg)](https://doi.org/10.5281/zenodo.24527917)
 [![CycloneDX](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-green.svg)](https://cyclonedx.org/)
 [![OASIS SARIF](https://img.shields.io/badge/OASIS%20SARIF-2.1.0-darkgreen.svg)](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Native%20Server-purple.svg)](https://modelcontextprotocol.io/)
