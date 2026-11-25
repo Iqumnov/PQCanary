@@ -277,3 +277,113 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+---
+
+# PQCanary (Русская версия)
+
+Корпоративная платформа постквантовой криптографической безопасности, формальной верификации и аудита исходного кода.
+
+[![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
+[![Лицензия: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24527917.svg)](https://doi.org/10.5281/zenodo.24527917)
+[![CycloneDX](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-green.svg)](https://cyclonedx.org/)
+[![OASIS SARIF](https://img.shields.io/badge/OASIS%20SARIF-2.1.0-darkgreen.svg)](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html)
+[![Model Context Protocol](https://img.shields.io/badge/MCP-Native%20Server-purple.svg)](https://modelcontextprotocol.io/)
+[![Автор: Матвей Игумнов](https://img.shields.io/badge/Author-Matvei%20Igumnov-blue.svg)](https://github.com/Iqumnov)
+
+---
+
+## Обзор
+
+PQCanary — комплексная корпоративная система для выявления, математической верификации и автоматизированного устранения уязвимостей классической криптографии перед квантовым криптоанализом (алгоритмы Шора и Гровера). Платформа формирует спецификации криптографических компонентов (CBOM), верифицирует корректность реализаций методами строгой математики и выполняет контекстную модернизацию кода.
+
+Ядро разработано на безопасном Rust с полным запретом небезопасного кода (`#![forbid(unsafe_code)]`) и компилируется в автономные бинарные файлы, контейнеризированные сервисы и WebAssembly для клиентского исполнения в браузере.
+
+---
+
+## Ключевые возможности
+
+- **Синтаксический анализ конкретных деревьев (CST)**: Парсинг кода на Rust, TypeScript, JavaScript, Python, Go, Java, C и C++ с помощью Tree-sitter и базы из 193+ правил в 22 областях безопасности.
+- **Символьное и конколическое исполнение**: Преобразование криптографических операций в форму SSA (Static Single Assignment) и решение ограничений достижимости ветвей с помощью Microsoft Z3 SMT Solver.
+- **Формальная верификация в гомотопической теории типов (HoTT)**: Автоматический синтез доказательств на Lean 4 для проверки обратимости шифрования/дешифрования, инъективности и семантической стойкости IND-CPA.
+- **Термодинамическая диагностика побочных каналов**: Расчет предела диссипации Ландауэра ($k_B T \ln 2$) и выявление зон риска тепловых утечек.
+- **Релятивистский световой конус и сверка с пульсарами**: Проверка задержек сети (RTT) относительно геодезического предела распространения света Винсенти (WGS-84) и привязка ко времени массивов радиопульсаров ATNF.
+- **Активное зондирование квантово-устойчивых протоколов**: Бинарное тестирование рукопожатий TLS 1.3 (ML-KEM-768 / Kyber) и SSH 2.0 без необходимости внедрения инвазивных агентов.
+- **Контроль дрейфа CBOM и защита от квантового отката**: Семантическое дифференцирование спецификаций CycloneDX 1.6 в CI/CD для блокировки понижения стойкости шифрования.
+- **Анализ фрагментации MTU и потерь пакетов**: Расчет накладных расходов на сетевом уровне, сегментации MSS и вероятности сброса пакетов межсетевыми экранами для ML-KEM, ML-DSA и SLH-DSA.
+- **Индекс криптографической гибкости (CAS, NIST SP 800-227)**: Оценка модульности криптографических фабрик и возможности смены алгоритмов без перекомпиляции (шкала 0–100).
+- **Топологический секвенатор миграции (DAG)**: Построение строгого 5-фазного графа перехода на требования CNSA 2.0 и OMB M-23-02 от корневых PKI до баз данных.
+- **Плейбуки перешифрования данных без простоя**: Генерация шаблонов Terraform, параллельных воркеров и регламентов бесшовного перешифрования для AWS KMS, Azure Key Vault и GCP KMS.
+- **Быстрый Git Pre-Commit Hook**: Локальный инкрементальный аудит подготовленных файлов (`git diff --cached`) со временем отклика менее 15 мс.
+- **Пассивный перехватчик TLS через eBPF в ядре Linux**: Фильтрация пакетов Traffic Control (TC) для валидации X25519MLKEM768 в пакетах ClientHello/ServerHello без терминации сессий.
+- **Аудит физических HSM по протоколам PKCS#11 и KMIP**: Проверка аппаратных модулей безопасности (Thales Luna, Entrust nShield, AWS CloudHSM, YubiKey 5) на поддержку механизмов FIPS 203/204.
+- **Интеграция с Model Context Protocol (MCP)**: Встроенный сервер stdio JSON-RPC 2.0 с 57 инструментами для автономных ИИ-агентов (Claude, Cursor, Gemini).
+
+---
+
+## Архитектура документации
+
+Документация структурирована по методологии Diataxis:
+- `docs/getting-started/` — Руководства по установке и быстрый старт
+- `docs/architecture/` — Системная архитектура и модель угроз
+- `docs/engines/` — Математические движки, Z3, HoTT, физика и термодинамика
+- `docs/reference/` — Справочники CLI, REST API, спецификации MCP и схемы CBOM/SARIF
+- `docs/guides/` — Настройка CI/CD, аудит облачных KMS и автоматическое исправление кода
+
+Подробный индекс доступен в [docs/README.md](docs/README.md).
+
+---
+
+## Быстрый старт
+
+### 1. Установка бинарного релиза (Linux, macOS)
+```bash
+curl -sSf https://raw.githubusercontent.com/Iqumnov/PQCanary/main/scripts/install-bin.sh | sh
+```
+
+### 2. Сборка из исходного кода
+```bash
+git clone https://github.com/Iqumnov/PQCanary.git
+cd PQCanary
+cargo build --release
+cargo install --path ./cli --bin pqcanary
+```
+
+### 3. Базовые команды CLI
+```bash
+# Сканирование репозитория
+pqcanary scan .
+
+# Экспорт отчета в формате OASIS SARIF 2.1.0 для GitHub Code Scanning
+pqcanary scan . --format sarif --output pqcanary.sarif
+
+# Формирование спецификации CycloneDX 1.6 CBOM
+pqcanary cbom . --output cbom.json
+
+# Активное зондирование удаленного TLS 1.3 сервера на поддержку ML-KEM
+pqcanary probe cloudflare.com:443
+
+# Семантическое автоисправление уязвимого кода
+pqcanary patch ./src/crypto.js
+```
+
+---
+
+## Форматы работы и среды развертывания
+
+1. **Native CLI** — Автономный бинарный инструмент для терминала и скриптов CI/CD.
+2. **REST API Daemon** — Фоновый микросервис на порту 8080 с метриками Prometheus (`/metrics`).
+3. **MCP Server** — Нативный сервер протокола Model Context Protocol (`pqcanary-mcp`).
+4. **Tauri Desktop GUI** — Десктопное приложение для Windows, macOS и Linux.
+5. **Web Client (WASM)** — 100% клиентский аудит в браузере без отправки кода по сети.
+6. **Docker / Docker Compose** — Контейнеризированные образы для изолированного запуска.
+7. **Kubernetes** — Инфраструктурный аудит томов через DaemonSet.
+8. **GitHub Action** — Готовый экшен для блокировки регрессий в Pull Request.
+9. **Расширения для IDE** — Плагины для VS Code и Neovim с диагностикой на лету.
+
+---
+
+## Лицензия
+
+Распространяется под лицензией **Apache License 2.0** — см. файл [LICENSE](LICENSE).
